@@ -10,7 +10,9 @@ import ButtonGroup from "antd/lib/button/button-group";
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import PostCommentForm from "./forms/PostCommentForm";
+import PostCardContent from "./PostCardContent";
 import PostCommentCardList from "./PostCommentCardList";
+import PostImage from "./PostImage";
 
 function PostCard({ post, userId }) {
   const [liked, setLiked] = useState(false);
@@ -28,7 +30,7 @@ function PostCard({ post, userId }) {
     <div>
       <Card
         style={{ marginBottom: 10 }}
-        cover={post.Images[0] && <img src={post.Images[0].src} />}
+        cover={post.Images[0] && <PostImage images={post.Images} />}
         actions={[
           <RetweetOutlined key={"retweet"} />,
           liked ? (
@@ -62,7 +64,7 @@ function PostCard({ post, userId }) {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent content={post.content} />}
         />
       </Card>
       {isCommentFormOpen && <PostCommentForm post={post} />}

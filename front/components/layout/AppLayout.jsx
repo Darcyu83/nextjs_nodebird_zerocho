@@ -4,16 +4,36 @@ import { Menu, Input, Row, Col } from "antd";
 import { useMemo, useState } from "react";
 import UserProfile from "../UserProfile";
 import LoginForm from "../forms/LoginForm";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
 
+const Global = createGlobalStyle`
+  
+  .ant-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .ant-col:first-child{
+
+    padding-left: 0 !important;
+  }
+
+  .ant-col:last-child{
+
+
+    padding-right: 0 mp !important;
+  }
+
+`;
 function AppLayout({ children }) {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   return (
     <div style={{}}>
+      <Global />
       <p>공통메뉴</p>
       <Menu mode="horizontal">
         <Menu.Item key={"/"}>
