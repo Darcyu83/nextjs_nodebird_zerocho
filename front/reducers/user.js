@@ -1,9 +1,10 @@
 import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
-  name: "yuds",
+  id: null,
+  pwd: null,
+  nickname: "yuds",
   age: 100,
-  pwd: "sduy",
   isLoggedIn: false,
 };
 
@@ -14,13 +15,14 @@ const LOGOUT = "LOGOUT";
 export const changeNickname = (data) => {
   return {
     type: CHANGE_NICKNAME,
-    data: "hello yuds",
+    data,
   };
 };
 
-export const loginAction = () => {
+export const loginAction = (data) => {
   return {
     type: LOGIN,
+    data,
   };
 };
 
@@ -42,7 +44,12 @@ const userReducer = (state = initialState, action) => {
       };
 
     case LOGIN:
-      return { ...state, isLoggedIn: true };
+      return {
+        ...state,
+        id: action.data.id,
+        pwd: action.data.pwd,
+        isLoggedIn: true,
+      };
     case LOGOUT:
       return { ...state, isLoggedIn: false };
     default:

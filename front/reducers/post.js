@@ -3,13 +3,13 @@ import { HYDRATE } from "next-redux-wrapper";
 export const initialState = {
   mainPosts: [
     {
-      id: 1,
-      User: { id: 11, nickname: "haah" },
+      id: "1",
+      User: { id: "11", nickname: "haah" },
       content: "first post",
       Images: [{ src: "https://avatars.githubusercontent.com/u/62939972?v=4" }],
       Comments: [
-        { User: { id: 21, nickname: "hoho" }, content: "Oh first Post" },
-        { User: { id: 31, nickname: "hoira" }, content: "Oh first Post 2 2" },
+        { User: { id: "21", nickname: "hoho" }, content: "Oh first Post" },
+        { User: { id: "31", nickname: "hoira" }, content: "Oh first Post 2 2" },
       ],
     },
   ],
@@ -20,13 +20,16 @@ export const initialState = {
 const ADD_POST = "ADD_POST";
 
 const dummyPost = () => ({
-  id: 2,
-  User: { id: 11, nickname: "hohohaah" },
+  id: "2",
+  User: { id: "11", nickname: "hohohaah" },
   content: "first post",
   Images: [{ src: "https://avatars.githubusercontent.com/u/62939972?v=4" }],
   Comments: [
-    { User: { id: 21, nickname: "hoirahoho" }, content: "Oh first Post" },
-    { User: { id: 31, nickname: "hahahoira" }, content: "Oh first Post 2 2" },
+    { User: { id: "21", nickname: "khoirahoho" }, content: "Oh first Post" },
+    {
+      User: { id: "31", nickname: "lhahahoira" },
+      content: "Oh first Post 2 2",
+    },
   ],
 });
 

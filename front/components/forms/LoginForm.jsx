@@ -33,7 +33,7 @@ function LoginForm() {
   // custom hook
   const onSubmitForm = useCallback(() => {
     console.log(id, pwd);
-    dispatch(loginAction());
+    dispatch(loginAction({ id, pwd }));
   }, [id, pwd]);
 
   return (
@@ -63,7 +63,5 @@ function LoginForm() {
   );
 }
 
-LoginForm.propTypes = {
-  setIsLoggedIn: PropTypes.func.isRequired,
-};
+LoginForm.propTypes = {};
 export default LoginForm;
