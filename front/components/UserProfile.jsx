@@ -5,11 +5,14 @@ import { useDispatch } from "react-redux";
 import { logoutRequestAction } from "../reducers/user";
 
 const { Meta } = Card;
-function UserProfile() {
+
+function UserProfile({ isProcessing }) {
   const dispatch = useDispatch();
+
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
   }, []);
+
   return (
     <Card
       actions={[
@@ -18,11 +21,13 @@ function UserProfile() {
       ]}
     >
       <Meta avatar={<Avatar>YUDS</Avatar>} title="userId" />
-      <Button onClick={onLogOut}>로그아웃</Button>
+      <Button onClick={onLogOut} loading={isProcessing}>
+        로그아웃
+      </Button>
     </Card>
   );
 }
 
-UserProfile.propTypes = {};
+UserProfile.propTypes = { isProcessing: PropTypes.bool };
 
 export default UserProfile;

@@ -30,7 +30,7 @@ const Global = createGlobalStyle`
 
 `;
 function AppLayout({ children }) {
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const { isLoggedIn, isProcessing } = useSelector((state) => state.user);
   return (
     <div style={{}}>
       <Global />
@@ -66,9 +66,9 @@ function AppLayout({ children }) {
       <Row gutter={8}>
         <Col xs={24} md={6}>
           {isLoggedIn ? (
-            <UserProfile isLoggedIn={isLoggedIn} />
+            <UserProfile isLoggedIn={isLoggedIn} isProcessing={isProcessing} />
           ) : (
-            <LoginForm isLoggedIn={isLoggedIn} />
+            <LoginForm isLoggedIn={isLoggedIn} isProcessing={isProcessing} />
           )}
         </Col>
         <Col xs={24} md={12}>

@@ -6,13 +6,18 @@ export const initialState = {
   nickname: "yuds",
   age: 100,
   isLoggedIn: false,
+  isProcessing: false,
 };
 
-const CHANGE_NICKNAME = "CHANGE_NICKNAME";
-const LOGIN_REQUEST = "LOGIN_REQUEST";
-const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-const LOGIN_FAILURE = "LOGIN_FAILURE";
-const LOGOUT = "LOGOUT";
+export const CHANGE_NICKNAME = "CHANGE_NICKNAME";
+
+export const LOGIN_REQUEST = "LOGIN_REQUEST";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILURE = "LOGIN_FAILURE";
+
+export const LOGOUT_REQUEST = "LOGOUT_REQUEST";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+export const LOGOUT_FAILURE = "LOGOUT_FAILURE";
 
 export const changeNickname = (data) => {
   return {
@@ -28,12 +33,12 @@ export const loginAction = (data) => {
     const state = getState();
 
     dispatch(loginRequestAction());
-    axios
-      .post("/api/login")
-      .then(() => {
-        dispatch(loginSuccessAction(data));
-      })
-      .catch(() => dispatch(loginFailureAction(data)));
+    // axios
+    //   .post("/api/login")
+    //   .then(() => {
+    //     dispatch(loginSuccessAction(data));
+    //   })
+    //   .catch(() => dispatch(loginFailureAction(data)));
   };
 };
 
@@ -56,9 +61,22 @@ export const loginFailureAction = (data) => {
   };
 };
 
-export const logoutRequestAction = () => {
+export const logoutRequestAction = (data) => {
   return {
-    type: LOGOUT,
+    type: LOGOUT_REQUEST,
+    data,
+  };
+};
+export const logoutSuccessAction = (data) => {
+  return {
+    type: LOGOUT_SUCCESS,
+    data,
+  };
+};
+export const logoutFailureAction = (data) => {
+  return {
+    type: LOGOUT_FAILURE,
+    data,
   };
 };
 
@@ -67,6 +85,7 @@ const userReducer = (state = initialState, action) => {
     case HYDRATE:
       console.log("HYDRATE", action.payload);
       return { ...state, ...action.payload };
+
     case CHANGE_NICKNAME:
       return {
         ...state,
@@ -74,14 +93,35 @@ const userReducer = (state = initialState, action) => {
       };
 
     case LOGIN_REQUEST:
+      return { ...state, isProcessing: true };
+
+    case LOGIN_SUCCESS:
       return {
         ...state,
         id: action.data.id,
         pwd: action.data.pwd,
         isLoggedIn: true,
+        isProcessing: false,
       };
-    case LOGOUT:
-      return { ...state, isLoggedIn: false };
+
+    case LOGIN_FAILURE:
+      return {
+        ...state,
+        id: action.data.id,
+        pwd: action.data.pwd,
+        isLoggedIn: false,
+        isProcessing: false,
+      };
+
+    case LOGOUT_REQUEST:
+      return { ...state, isProcessing: true };
+
+    case LOGOUT_SUCCESS:
+      return { ...state, isLoggedIn: false, isProcessing: false };
+
+    case LOGOUT_FAILURE:
+      return { ...state, isProcessing: false };
+
     default:
       return state;
   }

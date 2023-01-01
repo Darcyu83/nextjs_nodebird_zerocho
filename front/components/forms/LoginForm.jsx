@@ -4,7 +4,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../../hooks/useInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginRequestAction } from "../../reducers/user";
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -14,7 +14,7 @@ const FormContainer = styled(Form)`
   padding: 10px;
 `;
 
-function LoginForm() {
+function LoginForm({ isProcessing }) {
   // const [id, setId] = useState("userId");
   // const [pwd, setPwd] = useState("password");
 
@@ -51,7 +51,7 @@ function LoginForm() {
         </div>
 
         <ButtonWrapper>
-          <Button type="primary" htmlType="submit" loading={false}>
+          <Button type="primary" htmlType="submit" loading={isProcessing}>
             로그인
           </Button>
           <Link href="/signup">
@@ -63,5 +63,5 @@ function LoginForm() {
   );
 }
 
-LoginForm.propTypes = {};
+LoginForm.propTypes = { isProcessing: PropTypes.bool };
 export default LoginForm;

@@ -2,24 +2,30 @@ import { createWrapper } from "next-redux-wrapper";
 import { legacy_createStore, compose, applyMiddleware } from "redux";
 import rootReducer from "../reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
-import thunkMiddleware from "redux-thunk";
-
+import createSagaMiddleware from "redux-saga";
+import rootSaga from "../sagas";
 const customLoggerMiddleware =
   ({ dispatch, getState }) =>
   (next) =>
   (action) => {
-    console.log("customLoggerMiddleware action:: ", action);
+    console.log(
+      "%c customLoggerMiddleware action:: ",
+      "background-color: teal; color: white;",
+      action
+    );
     return next(action);
   };
+
 const configureStoreAsStore = () => {
-  const middlewares = [thunkMiddleware, customLoggerMiddleware];
+  const sagaMiddleware = createSagaMiddleware();
+  const middlewares = [sagaMiddleware, customLoggerMiddleware];
   const enhancer =
     process.env.NODE_ENV === "production"
       ? compose(applyMiddleware(...middlewares))
       : composeWithDevTools(applyMiddleware(...middlewares));
 
   const store = legacy_createStore(rootReducer, enhancer);
-
+  store.sagaTask = sagaMiddleware.run(rootSaga);
   return store;
 };
 

@@ -7,7 +7,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
 import { useDispatch } from "react-redux";
-import { loginRequestAction } from "../reducers";
+import { loginRequestAction } from "../reducers/user";
 
 const ErrorMessage = styled.p`
   color: red;
