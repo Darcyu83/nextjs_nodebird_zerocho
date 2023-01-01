@@ -9,7 +9,9 @@ export const initialState = {
 };
 
 const CHANGE_NICKNAME = "CHANGE_NICKNAME";
-const LOGIN = "LOGIN";
+const LOGIN_REQUEST = "LOGIN_REQUEST";
+const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+const LOGIN_FAILURE = "LOGIN_FAILURE";
 const LOGOUT = "LOGOUT";
 
 export const changeNickname = (data) => {
@@ -19,14 +21,42 @@ export const changeNickname = (data) => {
   };
 };
 
+// thunk 예제
+
 export const loginAction = (data) => {
+  return (dispatch, getState) => {
+    const state = getState();
+
+    dispatch(loginRequestAction());
+    axios
+      .post("/api/login")
+      .then(() => {
+        dispatch(loginSuccessAction(data));
+      })
+      .catch(() => dispatch(loginFailureAction(data)));
+  };
+};
+
+export const loginRequestAction = (data) => {
   return {
-    type: LOGIN,
+    type: LOGIN_REQUEST,
+    data,
+  };
+};
+export const loginSuccessAction = (data) => {
+  return {
+    type: LOGIN_SUCCESS,
+    data,
+  };
+};
+export const loginFailureAction = (data) => {
+  return {
+    type: LOGIN_FAILURE,
     data,
   };
 };
 
-export const logoutAction = () => {
+export const logoutRequestAction = () => {
   return {
     type: LOGOUT,
   };
@@ -43,7 +73,7 @@ const userReducer = (state = initialState, action) => {
         name: action.data,
       };
 
-    case LOGIN:
+    case LOGIN_REQUEST:
       return {
         ...state,
         id: action.data.id,

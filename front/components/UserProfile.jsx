@@ -2,13 +2,13 @@ import { Avatar, Button, Card } from "antd";
 import { useCallback } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import { logoutAction } from "../reducers/user";
+import { logoutRequestAction } from "../reducers/user";
 
 const { Meta } = Card;
 function UserProfile() {
   const dispatch = useDispatch();
   const onLogOut = useCallback(() => {
-    dispatch(logoutAction());
+    dispatch(logoutRequestAction());
   }, []);
   return (
     <Card

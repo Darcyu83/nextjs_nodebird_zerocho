@@ -2,9 +2,17 @@ import { createWrapper } from "next-redux-wrapper";
 import { legacy_createStore, compose, applyMiddleware } from "redux";
 import rootReducer from "../reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
+import thunkMiddleware from "redux-thunk";
 
+const customLoggerMiddleware =
+  ({ dispatch, getState }) =>
+  (next) =>
+  (action) => {
+    console.log("customLoggerMiddleware action:: ", action);
+    return next(action);
+  };
 const configureStoreAsStore = () => {
-  const middlewares = [];
+  const middlewares = [thunkMiddleware, customLoggerMiddleware];
   const enhancer =
     process.env.NODE_ENV === "production"
       ? compose(applyMiddleware(...middlewares))

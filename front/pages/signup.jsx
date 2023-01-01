@@ -7,7 +7,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../reducers";
+import { loginRequestAction } from "../reducers";
 
 const ErrorMessage = styled.p`
   color: red;
@@ -61,7 +61,7 @@ function signup() {
   const onSubmit = useCallback(() => {
     setTerm(true);
 
-    dispatch(loginAction());
+    dispatch(loginRequestAction());
   }, []);
 
   useCallback(() => {}, {});
