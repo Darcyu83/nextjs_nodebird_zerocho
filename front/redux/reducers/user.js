@@ -1,5 +1,7 @@
 import { HYDRATE } from "next-redux-wrapper";
 
+
+
 export const initialState = {
   me: {
     id: null,
@@ -24,11 +26,22 @@ const dummyUser = (action) => ({
   pwd: action.data.pwd,
   nickname: "yuds",
   age: 100,
-  posts: [],
-  followings: [],
-  followers: [],
+  posts: [{ id: "1" }],
+  followings: [
+    { nickname: "person 1" },
+    { nickname: "person 2" },
+    { nickname: "person 3" },
+  ],
+  followers: [
+    { nickname: "follower 1" },
+    { nickname: "follower 2" },
+    { nickname: "follower 3" },
+  ],
 });
-export const CHANGE_NICKNAME = "CHANGE_NICKNAME";
+
+export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAMEREQUEST";
+export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAMESUCCESS";
+export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAMEFAILURE";
 
 export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
@@ -49,6 +62,9 @@ export const FOLLOW_FAILURE = "FOLLOW_FAILURE";
 export const UNFOLLOW_REQUEST = "UNFOLLOW_REQUEST";
 export const UNFOLLOW_SUCCESS = "UNFOLLOW_SUCCESS";
 export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
+
+export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
+export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
 export const changeNickname = (data) => {
   return {
@@ -128,17 +144,33 @@ export const signupFailureAction = (error) => {
     error,
   };
 };
+
+export const changeNicknameRequestAction = (data) => {
+  return {
+    type: LOGOUT_REQUEST,
+    data,
+  };
+};
+export const changeNicknameSuccessAction = (data) => {
+  return {
+    type: LOGOUT_SUCCESS,
+    data,
+  };
+};
+export const changeNicknameFailureAction = (error) => {
+  return {
+    type: LOGOUT_FAILURE,
+    error,
+  };
+};
+
+// Immer 적용
+
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case HYDRATE:
       console.log("HYDRATE", action.payload);
       return { ...state, ...action.payload };
-
-    case CHANGE_NICKNAME:
-      return {
-        ...state,
-        name: action.data,
-      };
 
     case SIGN_UP_REQUEST:
       return {
@@ -176,9 +208,7 @@ const userReducer = (state = initialState, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-
         me: { ...dummyUser(action) },
-
         isLoggedIn: true,
         isProcessing: false,
       };
@@ -216,6 +246,46 @@ const userReducer = (state = initialState, action) => {
         error: action.error,
       };
 
+    case CHANGE_NICKNAME_REQUEST:
+      return {
+        ...state,
+        isProcessing: true,
+        isErrorOccured: false,
+        error: null,
+      };
+
+    case CHANGE_NICKNAME_SUCCESS:
+      return {
+        ...state,
+        me: { ...state.me, nickname: action.data.nickname },
+        isLoggedIn: false,
+        isProcessing: false,
+      };
+
+    case CHANGE_NICKNAME_FAILURE:
+      return {
+        ...state,
+        isProcessing: false,
+        isErrorOccured: true,
+        error: action.error,
+      };
+
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        me: { ...state.me, posts: [action.data.postId, ...state.me.posts] },
+      };
+
+    case REMOVE_POST_OF_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          posts: state.me.posts.filter(
+            (post) => post.id !== action.data.postId
+          ),
+        },
+      };
     default:
       return state;
   }

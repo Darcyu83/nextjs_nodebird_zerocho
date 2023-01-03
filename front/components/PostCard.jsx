@@ -9,6 +9,8 @@ import { Avatar, Button, Card, Popover } from "antd";
 import ButtonGroup from "antd/lib/button/button-group";
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { REMOVE_POST_REQUEST } from "../redux/reducers/post";
 import PostCommentForm from "./forms/PostCommentForm";
 import PostCardContent from "./PostCardContent";
 import PostCommentCardList from "./PostCommentCardList";
@@ -18,12 +20,19 @@ function PostCard({ post, userId }) {
   const [liked, setLiked] = useState(false);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
 
+  const dispatch = useDispatch();
+  const isProcessing = useSelector((state) => state.post.isProcessing);
+
   const onToggleCommentForm = useCallback(() => {
     setIsCommentFormOpen((prev) => !prev);
   }, []);
 
   const onToggleLike = useCallback(() => {
     setLiked((prev) => !prev);
+  }, []);
+
+  const onClickDelete = useCallback(() => {
+    dispatch({ type: REMOVE_POST_REQUEST, data: post });
   }, []);
 
   return (
@@ -47,13 +56,20 @@ function PostCard({ post, userId }) {
             key="Ellipsis"
             content={
               <ButtonGroup>
-                {userId === post.id && (
+                {userId === post.User.id && (
                   <>
                     <Button>수정</Button>
-                    <Button type="ghost">삭제</Button>
+                    <Button
+                      type="primary"
+                      danger
+                      onClick={onClickDelete}
+                      loading={isProcessing}
+                    >
+                      삭제
+                    </Button>
                   </>
                 )}
-                <Button>신고</Button>
+                {userId !== post.User.id && <Button>신고</Button>}
               </ButtonGroup>
             }
           >
@@ -78,4 +94,5 @@ PostCard.propTypes = {
   post: PropTypes.object,
   userId: PropTypes.string,
 };
+
 export default PostCard;

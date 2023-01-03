@@ -19,7 +19,9 @@ function PostCommentForm({ post }) {
 
     dispatch(
       addCommentRequestAction({
-        data: { content: commentText, postId: post.id, userId: id },
+        content: commentText,
+        postId: post.id,
+        userId: id,
       })
     );
   }, [id, commentText]);

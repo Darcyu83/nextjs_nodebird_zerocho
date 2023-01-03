@@ -11,13 +11,16 @@ const FormContainer = styled(Form)`
 function PostForm() {
   const dispatch = useDispatch();
 
-  const { imagePaths, isAddPostDone } = useSelector((state) => state.post);
+  const { imagePaths, isAddPostDone, isProcessing } = useSelector(
+    (state) => state.post
+  );
+  const userId = useSelector((state) => state.user.me.id);
   const fileRef = useRef();
   const [content, onChangeContent, setContent] = useInput("");
 
   const onSubmit = useCallback(() => {
-    dispatch(addPostRequestAction({}));
-  }, []);
+    dispatch(addPostRequestAction({ userId, content }));
+  }, [content]);
 
   const onClickImageUpload = useCallback(() => {
     console.log("fileRef.current", fileRef.current);
@@ -50,7 +53,12 @@ function PostForm() {
           </div>
         ))}
       </div>
-      <Button htmlType="submit" type="primary" style={{ float: "right" }}>
+      <Button
+        loading={isProcessing}
+        htmlType="submit"
+        type="primary"
+        style={{ float: "right" }}
+      >
         등록
       </Button>
     </FormContainer>

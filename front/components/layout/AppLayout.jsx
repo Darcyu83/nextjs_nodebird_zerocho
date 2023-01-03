@@ -35,32 +35,32 @@ function AppLayout({ children }) {
     <div style={{}}>
       <Global />
       <p>공통메뉴</p>
+
       <Menu
         mode="horizontal"
         items={[
-          <Menu.Item key={"/"}>
-            <Link href="/">
-              <p>노드버드</p>
-            </Link>
-          </Menu.Item>,
-          <Menu.Item key={"profile"}>
-            <Link href="/profile">
-              <p>프로필</p>
-            </Link>
-          </Menu.Item>,
-          <Menu.Item key={"search"}>
-            <SearchInput
-              // style={{ verticalAlign: "middle" }}
-              enterButton
-            />
-          </Menu.Item>,
-          !isLoggedIn && (
-            <Menu.Item key={"signup"}>
+          {
+            label: (
+              <Link href="/">
+                <p>노드버드</p>
+              </Link>
+            ),
+          },
+          {
+            label: (
+              <Link href="/profile">
+                <p>프로필</p>
+              </Link>
+            ),
+          },
+          { label: <SearchInput enterButton /> },
+          !isLoggedIn && {
+            label: (
               <Link href="/signup">
                 <p>회원가입</p>
               </Link>
-            </Menu.Item>
-          ),
+            ),
+          },
         ]}
       >
         {/* <Menu.Item key={"/"}>

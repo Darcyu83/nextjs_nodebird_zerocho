@@ -68,7 +68,7 @@ function* loginFetch(action) {
     // const response = yield call(loginAPI, action.params);
     const response = yield delay(2000);
 
-    yield put({ type: LOGIN_SUCCESS, data: response });
+    yield put({ type: LOGIN_SUCCESS, data: action.data });
   } catch (error) {
     yield put({ type: LOGIN_FAILURE, error });
   }
@@ -86,7 +86,7 @@ function* logoutFetch(action) {
 function* signupFetch(action) {
   try {
     yield delay(1000);
-    yield put({ type: SIGN_UP_SUCCESS });
+    yield put({ type: SIGN_UP_SUCCESS, data: action.data });
   } catch (error) {
     yield put({ type: SIGN_UP_FAILURE, error });
   }
@@ -96,15 +96,15 @@ function* watchLogin() {
   //   while (true) {
   //     yield take(LOGIN_REQUEST, loginFetch);
   //   }
-  yield takeEvery(LOGIN_REQUEST, loginFetch);
+  yield takeLatest(LOGIN_REQUEST, loginFetch);
 }
 
 function* watchLogout() {
-  yield takeEvery(LOGOUT_REQUEST, logoutFetch);
+  yield takeLatest(LOGOUT_REQUEST, logoutFetch);
 }
 
 function* watchSignUp() {
-  yield takeEvery(SIGN_UP_REQUEST, signupFetch);
+  yield takeLatest(SIGN_UP_REQUEST, signupFetch);
 }
 
 export default function* userSaga() {
