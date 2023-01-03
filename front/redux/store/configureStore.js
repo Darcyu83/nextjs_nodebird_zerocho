@@ -1,8 +1,8 @@
 import { createWrapper } from "next-redux-wrapper";
 import { legacy_createStore, compose, applyMiddleware } from "redux";
-import rootReducer from "../reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
+import rootReducer from "../reducers";
 import rootSaga from "../sagas";
 const customLoggerMiddleware =
   ({ dispatch, getState }) =>
@@ -29,7 +29,7 @@ const configureStoreAsStore = () => {
   return store;
 };
 
-const wrapper = createWrapper(configureStoreAsStore, {
+export const wrapper = createWrapper(configureStoreAsStore, {
   debug: process.env.NODE_ENV === "development",
 });
 

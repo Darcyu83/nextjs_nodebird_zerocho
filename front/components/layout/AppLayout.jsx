@@ -35,8 +35,35 @@ function AppLayout({ children }) {
     <div style={{}}>
       <Global />
       <p>공통메뉴</p>
-      <Menu mode="horizontal">
-        <Menu.Item key={"/"}>
+      <Menu
+        mode="horizontal"
+        items={[
+          <Menu.Item key={"/"}>
+            <Link href="/">
+              <p>노드버드</p>
+            </Link>
+          </Menu.Item>,
+          <Menu.Item key={"profile"}>
+            <Link href="/profile">
+              <p>프로필</p>
+            </Link>
+          </Menu.Item>,
+          <Menu.Item key={"search"}>
+            <SearchInput
+              // style={{ verticalAlign: "middle" }}
+              enterButton
+            />
+          </Menu.Item>,
+          !isLoggedIn && (
+            <Menu.Item key={"signup"}>
+              <Link href="/signup">
+                <p>회원가입</p>
+              </Link>
+            </Menu.Item>
+          ),
+        ]}
+      >
+        {/* <Menu.Item key={"/"}>
           <Link href="/">
             <p>노드버드</p>
           </Link>
@@ -57,8 +84,7 @@ function AppLayout({ children }) {
             <Link href="/signup">
               <p>회원가입</p>
             </Link>
-          </Menu.Item>
-        )}
+          </Menu.Item>         )}*/}
       </Menu>
       {/* Responsive */}
       {/* 가로 정의 => 세로  */}
@@ -66,7 +92,7 @@ function AppLayout({ children }) {
       <Row gutter={8}>
         <Col xs={24} md={6}>
           {isLoggedIn ? (
-            <UserProfile isLoggedIn={isLoggedIn} isProcessing={isProcessing} />
+            <UserProfile />
           ) : (
             <LoginForm isLoggedIn={isLoggedIn} isProcessing={isProcessing} />
           )}

@@ -1,8 +1,9 @@
 import { Button, Form, Input } from "antd";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { addPostAction } from "../../reducers/post";
+import useInput from "../../hooks/useInput";
+import { addPostRequestAction } from "../../redux/reducers/post";
 
 const FormContainer = styled(Form)`
   margin: 10px 0 28px;
@@ -10,23 +11,22 @@ const FormContainer = styled(Form)`
 function PostForm() {
   const dispatch = useDispatch();
 
-  const { imagePaths } = useSelector((state) => state.post);
+  const { imagePaths, isAddPostDone } = useSelector((state) => state.post);
   const fileRef = useRef();
-  const [content, setContent] = useState("");
+  const [content, onChangeContent, setContent] = useInput("");
 
   const onSubmit = useCallback(() => {
-    dispatch(addPostAction());
-    setContent("");
-  }, []);
-
-  const onChangeContent = useCallback((e) => {
-    setContent(e.target.value);
+    dispatch(addPostRequestAction({}));
   }, []);
 
   const onClickImageUpload = useCallback(() => {
     console.log("fileRef.current", fileRef.current);
     fileRef.current.click();
   }, [fileRef.current]);
+
+  useEffect(() => {
+    if (isAddPostDone) setContent("");
+  }, [isAddPostDone]);
 
   return (
     <FormContainer onFinish={onSubmit}>

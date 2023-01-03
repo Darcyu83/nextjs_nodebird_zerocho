@@ -2,7 +2,7 @@ import React from "react";
 import PropType from "prop-types";
 import "antd/dist/antd.css";
 import Head from "next/head";
-import wrapper from "../store/configureStore";
+import wrapper from "../redux/store/configureStore";
 
 function _app({ Component, pageProps }) {
   return (

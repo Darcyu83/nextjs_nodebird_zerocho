@@ -5,7 +5,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequestAction } from "../../reducers/user";
+import { loginRequestAction } from "../../redux/reducers/user";
 const ButtonWrapper = styled.div`
   margin-top: 10px;
 `;
@@ -27,22 +27,27 @@ function LoginForm({ isProcessing }) {
   // }, []);
 
   const dispatch = useDispatch();
-  const [id, onChangeId] = useInput();
+  const [email, onChangeEmail] = useInput();
   const [pwd, onChangePwd] = useInput();
 
   // custom hook
   const onSubmitForm = useCallback(() => {
-    console.log(id, pwd);
-    dispatch(loginRequestAction({ id, pwd }));
-  }, [id, pwd]);
+    console.log(email, pwd);
+    dispatch(loginRequestAction({ email, pwd }));
+  }, [email, pwd]);
 
   return (
     <div style={{}}>
       <FormContainer method="post" onFinish={onSubmitForm}>
         <div>
-          <label htmlFor="user-id">아이디</label>
+          <label htmlFor="user-email">아이디</label>
           <br />
-          <Input name="user-id" value={id} onChange={onChangeId} required />
+          <Input
+            name="user-email"
+            value={email}
+            onChange={onChangeEmail}
+            required
+          />
         </div>
         <div>
           <label htmlFor="user-pwd">비밀번호</label>

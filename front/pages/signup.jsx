@@ -6,15 +6,16 @@ import { useCallback, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginRequestAction } from "../reducers/user";
+import { signupRequestAction } from "../redux/reducers/user";
 
 const ErrorMessage = styled.p`
   color: red;
 `;
 const FormContainer = styled(Form)``;
 
-function signup() {
+function Signup() {
   // const [id, setId] = useState("");
   // const [pwd, setPwd] = useState("");
   // const [nickname, setNickname] = useState("");
@@ -30,7 +31,7 @@ function signup() {
   // const onChangeNickname = useCallback((e) => {
   //   setNickname(e.target.value);
   // }, []);
-  const [id, onChangeId] = useInput();
+  const [email, onChangeEmail] = useInput();
   const [pwd, onChangePwd] = useInput();
   const [nickname, onChangeNickname] = useInput();
 
@@ -58,13 +59,14 @@ function signup() {
   }, []);
 
   const dispatch = useDispatch();
+
+  const { isProcessing } = useSelector((state) => state.user);
+
   const onSubmit = useCallback(() => {
     setTerm(true);
 
-    dispatch(loginRequestAction());
-  }, []);
-
-  useCallback(() => {}, {});
+    dispatch(signupRequestAction({ email, pwd }));
+  }, [email, pwd]);
 
   return (
     <AppLayout style={{}}>
@@ -74,9 +76,15 @@ function signup() {
 
       <FormContainer onFinish={onSubmit}>
         <div>
-          <label htmlFor="user-id">아이디</label>
+          <label htmlFor="user-email">이메일</label>
           <br />
-          <Input name="user-id" value={id} onChange={onChangeId} required />
+          <Input
+            name="user-email"
+            type="email"
+            value={email}
+            onChange={onChangeEmail}
+            required
+          />
         </div>
         <div>
           <label htmlFor="user-pwd">패스워드</label>
@@ -117,6 +125,7 @@ function signup() {
           type="primary"
           htmlType="submit"
           disabled={termErr || passwordErr}
+          loading={isProcessing}
         >
           가입하기
         </Button>
@@ -125,5 +134,5 @@ function signup() {
   );
 }
 
-signup.propTypes = {};
-export default signup;
+Signup.propTypes = {};
+export default Signup;

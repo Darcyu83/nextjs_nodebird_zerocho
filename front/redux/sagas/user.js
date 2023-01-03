@@ -19,6 +19,9 @@ import {
   LOGOUT_FAILURE,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
+  SIGN_UP_FAILURE,
+  SIGN_UP_REQUEST,
+  SIGN_UP_SUCCESS,
 } from "../reducers/user";
 import axios from "axios";
 /*
@@ -67,7 +70,25 @@ function* loginFetch(action) {
 
     yield put({ type: LOGIN_SUCCESS, data: response });
   } catch (error) {
-    yield put({ type: LOGIN_FAILURE });
+    yield put({ type: LOGIN_FAILURE, error });
+  }
+}
+
+function* logoutFetch(action) {
+  try {
+    yield delay(1000);
+    yield put({ type: LOGOUT_SUCCESS });
+  } catch (error) {
+    yield put({ type: LOGOUT_FAILURE, error });
+  }
+}
+
+function* signupFetch(action) {
+  try {
+    yield delay(1000);
+    yield put({ type: SIGN_UP_SUCCESS });
+  } catch (error) {
+    yield put({ type: SIGN_UP_FAILURE, error });
   }
 }
 
@@ -78,18 +99,14 @@ function* watchLogin() {
   yield takeEvery(LOGIN_REQUEST, loginFetch);
 }
 
-function* logoutFetch(action) {
-  try {
-    yield delay(1000);
-    yield put({ type: LOGOUT_SUCCESS });
-  } catch (error) {
-    yield put({ type: LOGOUT_FAILURE });
-  }
-}
 function* watchLogout() {
   yield takeEvery(LOGOUT_REQUEST, logoutFetch);
 }
 
+function* watchSignUp() {
+  yield takeEvery(SIGN_UP_REQUEST, signupFetch);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchLogin), fork(watchLogout)]);
+  yield all([fork(watchLogin), fork(watchLogout), fork(watchSignUp)]);
 }

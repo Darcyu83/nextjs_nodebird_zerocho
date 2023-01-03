@@ -1,17 +1,32 @@
 import { Button, Form, Input } from "antd";
 import PropTypes from "prop-types";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../hooks/useInput";
+import { addCommentRequestAction } from "../../redux/reducers/post";
 
 function PostCommentForm({ post }) {
   const dispatch = useDispatch();
-  const { id: userId, nickname } = useSelector((state) => state.user);
-  const [commentText, onChangeContent] = useInput(post.content);
+  const {
+    me: { id, nickname },
+  } = useSelector((state) => state.user);
+  const { isAddCommentDone } = useSelector((state) => state.post);
+
+  const [commentText, onChangeContent, setCommentText] = useInput(post.content);
 
   const onSubmit = useCallback(() => {
-    console.log(userId, nickname, commentText);
-  }, [userId, nickname, commentText]);
+    console.log(id, nickname, commentText);
+
+    dispatch(
+      addCommentRequestAction({
+        data: { content: commentText, postId: post.id, userId: id },
+      })
+    );
+  }, [id, commentText]);
+
+  useEffect(() => {
+    if (isAddCommentDone) setCommentText("");
+  }, [isAddCommentDone]);
 
   return (
     <Form onFinish={onSubmit}>
