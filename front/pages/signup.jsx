@@ -4,11 +4,8 @@ import Link from "next/link";
 import { Button, Checkbox, Form, Input } from "antd";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequestAction } from "../reducers/user";
-import { signupRequestAction } from "../redux/reducers/user";
 
 const ErrorMessage = styled.p`
   color: red;

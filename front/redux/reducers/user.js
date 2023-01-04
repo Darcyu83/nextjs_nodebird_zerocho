@@ -1,6 +1,5 @@
+import produce from "immer";
 import { HYDRATE } from "next-redux-wrapper";
-
-
 
 export const initialState = {
   me: {
@@ -165,130 +164,129 @@ export const changeNicknameFailureAction = (error) => {
 };
 
 // Immer 적용
+const userReducer = (state = initialState, action) =>
+  produce(state, (draft) => {
+    switch (action.type) {
+      case HYDRATE:
+        return { ...state, ...action.payload };
 
-const userReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case HYDRATE:
-      console.log("HYDRATE", action.payload);
-      return { ...state, ...action.payload };
+      case SIGN_UP_REQUEST:
+        return {
+          ...state,
+          isProcessing: true,
+          isErrorOccured: false,
+          error: null,
+        };
 
-    case SIGN_UP_REQUEST:
-      return {
-        ...state,
-        isProcessing: true,
-        isErrorOccured: false,
-        error: null,
-      };
+      case SIGN_UP_SUCCESS:
+        return {
+          ...state,
+          me: { ...dummyUser(action) },
+          isLoggedIn: false,
+          isProcessing: false,
+          isSignedUp: true,
+        };
 
-    case SIGN_UP_SUCCESS:
-      return {
-        ...state,
-        me: { ...dummyUser(action) },
-        isLoggedIn: false,
-        isProcessing: false,
-        isSignedUp: true,
-      };
+      case SIGN_UP_FAILURE:
+        return {
+          ...state,
+          isProcessing: false,
+          isErrorOccured: true,
+          error: action.error,
+        };
 
-    case SIGN_UP_FAILURE:
-      return {
-        ...state,
-        isProcessing: false,
-        isErrorOccured: true,
-        error: action.error,
-      };
+      case LOGIN_REQUEST:
+        return {
+          ...state,
+          isProcessing: true,
+          isErrorOccured: false,
+          error: null,
+        };
 
-    case LOGIN_REQUEST:
-      return {
-        ...state,
-        isProcessing: true,
-        isErrorOccured: false,
-        error: null,
-      };
+      case LOGIN_SUCCESS:
+        return {
+          ...state,
+          me: { ...dummyUser(action) },
+          isLoggedIn: true,
+          isProcessing: false,
+        };
 
-    case LOGIN_SUCCESS:
-      return {
-        ...state,
-        me: { ...dummyUser(action) },
-        isLoggedIn: true,
-        isProcessing: false,
-      };
+      case LOGIN_FAILURE:
+        return {
+          ...state,
+          isLoggedIn: false,
+          isProcessing: false,
+          isErrorOccured: true,
+          error: action.error,
+        };
 
-    case LOGIN_FAILURE:
-      return {
-        ...state,
-        isLoggedIn: false,
-        isProcessing: false,
-        isErrorOccured: true,
-        error: action.error,
-      };
+      case LOGOUT_REQUEST:
+        return {
+          ...state,
+          isProcessing: true,
+          isErrorOccured: false,
+          error: null,
+        };
 
-    case LOGOUT_REQUEST:
-      return {
-        ...state,
-        isProcessing: true,
-        isErrorOccured: false,
-        error: null,
-      };
+      case LOGOUT_SUCCESS:
+        return {
+          ...state,
+          me: initialState.me,
+          isLoggedIn: false,
+          isProcessing: false,
+        };
 
-    case LOGOUT_SUCCESS:
-      return {
-        ...state,
-        me: initialState.me,
-        isLoggedIn: false,
-        isProcessing: false,
-      };
+      case LOGOUT_FAILURE:
+        return {
+          ...state,
+          isProcessing: false,
+          isErrorOccured: true,
+          error: action.error,
+        };
 
-    case LOGOUT_FAILURE:
-      return {
-        ...state,
-        isProcessing: false,
-        isErrorOccured: true,
-        error: action.error,
-      };
+      case CHANGE_NICKNAME_REQUEST:
+        return {
+          ...state,
+          isProcessing: true,
+          isErrorOccured: false,
+          error: null,
+        };
 
-    case CHANGE_NICKNAME_REQUEST:
-      return {
-        ...state,
-        isProcessing: true,
-        isErrorOccured: false,
-        error: null,
-      };
+      case CHANGE_NICKNAME_SUCCESS:
+        return {
+          ...state,
+          me: { ...state.me, nickname: action.data.nickname },
+          isLoggedIn: false,
+          isProcessing: false,
+        };
 
-    case CHANGE_NICKNAME_SUCCESS:
-      return {
-        ...state,
-        me: { ...state.me, nickname: action.data.nickname },
-        isLoggedIn: false,
-        isProcessing: false,
-      };
+      case CHANGE_NICKNAME_FAILURE:
+        return {
+          ...state,
+          isProcessing: false,
+          isErrorOccured: true,
+          error: action.error,
+        };
 
-    case CHANGE_NICKNAME_FAILURE:
-      return {
-        ...state,
-        isProcessing: false,
-        isErrorOccured: true,
-        error: action.error,
-      };
+      case ADD_POST_TO_ME:
+        return {
+          ...state,
+          me: { ...state.me, posts: [action.data.postId, ...state.me.posts] },
+        };
 
-    case ADD_POST_TO_ME:
-      return {
-        ...state,
-        me: { ...state.me, posts: [action.data.postId, ...state.me.posts] },
-      };
-
-    case REMOVE_POST_OF_ME:
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          posts: state.me.posts.filter(
-            (post) => post.id !== action.data.postId
-          ),
-        },
-      };
-    default:
-      return state;
-  }
-};
+      case REMOVE_POST_OF_ME:
+        return {
+          ...state,
+          me: {
+            ...state.me,
+            posts: state.me.posts.filter(
+              (post) => post.id !== action.data.postId
+            ),
+          },
+        };
+      default:
+        return state;
+    }
+  });
 
 export default userReducer;

@@ -39,7 +39,7 @@ function PostCard({ post, userId }) {
     <div>
       <Card
         style={{ marginBottom: 10 }}
-        cover={post.Images[0] && <PostImage images={post.Images} />}
+        cover={post.images[0] && <PostImage images={post.images} />}
         actions={[
           <RetweetOutlined key={"retweet"} />,
           liked ? (
@@ -56,7 +56,7 @@ function PostCard({ post, userId }) {
             key="Ellipsis"
             content={
               <ButtonGroup>
-                {userId === post.User.id && (
+                {userId === post.user.id && (
                   <>
                     <Button>수정</Button>
                     <Button
@@ -69,7 +69,7 @@ function PostCard({ post, userId }) {
                     </Button>
                   </>
                 )}
-                {userId !== post.User.id && <Button>신고</Button>}
+                {userId !== post.user.id && <Button>신고</Button>}
               </ButtonGroup>
             }
           >
@@ -78,14 +78,14 @@ function PostCard({ post, userId }) {
         ]}
       >
         <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}
-          title={post.User.nickname}
+          avatar={<Avatar>{post.user.nickname[0].toUpperCase()}</Avatar>}
+          title={post.user.nickname}
           description={<PostCardContent content={post.content} />}
         />
       </Card>
       {isCommentFormOpen && <PostCommentForm post={post} />}
 
-      <PostCommentCardList comments={post.Comments} />
+      <PostCommentCardList comments={post.comments} />
     </div>
   );
 }

@@ -6,12 +6,9 @@ import PropTypes from "prop-types";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { loginRequestAction } from "../../redux/reducers/user";
+
 const ButtonWrapper = styled.div`
   margin-top: 10px;
-`;
-
-const FormContainer = styled(Form)`
-  padding: 10px;
 `;
 
 function LoginForm({ isProcessing }) {
@@ -38,7 +35,7 @@ function LoginForm({ isProcessing }) {
 
   return (
     <div style={{}}>
-      <FormContainer method="post" onFinish={onSubmitForm}>
+      <Form method="post" onFinish={onSubmitForm}>
         <div>
           <label htmlFor="user-email">아이디</label>
           <br />
@@ -63,7 +60,7 @@ function LoginForm({ isProcessing }) {
             <Button>회원가입</Button>
           </Link>
         </ButtonWrapper>
-      </FormContainer>
+      </Form>
     </div>
   );
 }

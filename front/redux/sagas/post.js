@@ -1,4 +1,12 @@
-import { delay, fork, put, takeLatest, all } from "redux-saga/effects";
+import {
+  delay,
+  fork,
+  put,
+  takeLatest,
+  all,
+  call,
+  throttle,
+} from "redux-saga/effects";
 import {
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
@@ -7,6 +15,10 @@ import {
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
   dummyPost,
+  generateDummyPostData,
+  LOAD_POSTS_FAILURE,
+  LOAD_POSTS_REQUEST,
+  LOAD_POSTS_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
   REMOVE_POST_SUCCESS,
@@ -48,6 +60,15 @@ function* removePostFetch(action) {
     yield put({ type: REMOVE_POST_FAILURE, error });
   }
 }
+
+function* loadPostFetch(action) {
+  try {
+    yield delay(1000);
+    yield put({ type: LOAD_POSTS_SUCCESS, data: generateDummyPostData(10) });
+  } catch (error) {
+    yield put({ type: LOAD_POSTS_FAILURE, error });
+  }
+}
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPostFetch);
 }
@@ -60,6 +81,15 @@ function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePostFetch);
 }
 
+function* watchLoadPost() {
+  yield throttle(2000, LOAD_POSTS_REQUEST, loadPostFetch);
+}
+
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchAddComment), fork(watchRemovePost)]);
+  yield all([
+    fork(watchAddPost),
+    fork(watchAddComment),
+    fork(watchRemovePost),
+    fork(watchLoadPost),
+  ]);
 }

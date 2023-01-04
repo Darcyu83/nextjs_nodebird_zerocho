@@ -10,8 +10,8 @@ function PostCommentCardList({ comments }) {
         <List.Item>
           <Card style={{ width: "100%" }}>
             <Card.Meta
-              title={comment.User.nickname}
-              avatar={<Avatar>{comment.User.nickname[0].toUpperCase()}</Avatar>}
+              title={comment.user.nickname}
+              avatar={<Avatar>{comment.user.nickname[0].toUpperCase()}</Avatar>}
               description={comment.content}
             />
           </Card>

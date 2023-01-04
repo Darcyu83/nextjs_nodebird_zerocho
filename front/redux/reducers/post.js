@@ -1,34 +1,53 @@
 import { HYDRATE } from "next-redux-wrapper";
 import produce from "immer";
 
+const createId = () => {
+  return Math.floor(Math.random() * 100000);
+};
+
+export const generateDummyPostData = (qnty) => {
+  return Array(qnty)
+    .fill()
+    .map((y, i) => {
+      const id = createId();
+
+      return {
+        id: id,
+        user: {
+          id: id,
+          nickname: "id의 닉네임" + id,
+        },
+        content: "id::의 글 :" + id + `#${id}`,
+        images: [
+          { src: "https://via.placeholder.com/1920x1080" },
+          i % 4 === 0
+            ? {
+                src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
+              }
+            : i % 4 === 1
+            ? {
+                src: "https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg",
+              }
+            : i % 4 === 2
+            ? {
+                src: "https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg",
+              }
+            : { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
+        ],
+        comments: [
+          {
+            user: { id: "21", nickname: "hoho" },
+            id: 1,
+            content: "Oh first Post",
+          },
+        ],
+      };
+    });
+};
+
 export const initialState = {
-  mainPosts: [
-    {
-      id: "1",
-      User: { id: "11", nickname: "haah" },
-      content: "first post #hasValue #인물",
-      Images: [
-        {
-          src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
-        },
-        {
-          src: "https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg",
-        },
-      ],
-      Comments: [
-        {
-          User: { id: "21", nickname: "hoho" },
-          id: 1,
-          content: "Oh first Post",
-        },
-        {
-          User: { id: "31", nickname: "hoira" },
-          id: 2,
-          content: "Oh first Post 2 2",
-        },
-      ],
-    },
-  ],
+  mainPosts: [],
+  hasMorePosts: true,
   imagePaths: [],
   isProcessing: false,
   isAddPostDone: false,
@@ -38,6 +57,8 @@ export const initialState = {
   isErrorOccured: false,
   error: null,
 };
+
+// initialState.mainPosts = generateDummyPostData(10);
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
@@ -55,13 +76,17 @@ export const REMOVE_COMMENT_REQUEST = "REMOVE_COMMENT_REQUEST";
 export const REMOVE_COMMENT_SUCCESS = "REMOVE_COMMENT_SUCCESS";
 export const REMOVE_COMMENT_FAILURE = "REMOVE_COMMENT_FAILURE";
 
+export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
+export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
+export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
+
 export const dummyPost = (action) => ({
-  id: Math.floor(Math.random() * 100000),
-  User: { id: action.data.userId, nickname: action.data.userId },
+  id: createId(),
+  user: { id: action.data.userId, nickname: action.data.userId },
   content: action.data.content
     ? action.data.content
     : "first post #어흥 #하하 #한국",
-  Images: [
+  images: [
     {
       src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
     },
@@ -73,10 +98,10 @@ export const dummyPost = (action) => ({
     },
     { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
   ],
-  Comments: [
-    { User: { id: "21", nickname: "khoirahoho" }, content: "Oh first Post" },
+  comments: [
+    { user: { id: "21", nickname: "khoirahoho" }, content: "Oh first Post" },
     {
-      User: { id: "31", nickname: "lhahahoira" },
+      user: { id: "31", nickname: "lhahahoira" },
       content: "Oh first Post 2 2",
     },
   ],
@@ -180,7 +205,7 @@ const postReducer = (state = initialState, action) =>
       case ADD_COMMENT_SUCCESS:
         // 새로운 코멘트
         const newComment = {
-          User: {
+          user: {
             id: action.data.userId,
             nickname: "reply:: " + action.data.userId,
           },
@@ -194,7 +219,7 @@ const postReducer = (state = initialState, action) =>
         );
 
         // 맨앞으로 추가
-        post.Comments.unshift(newComment);
+        post.comments.unshift(newComment);
         draft.isAddCommentDone = true;
         draft.isProcessing = false;
         break;
@@ -204,9 +229,9 @@ const postReducer = (state = initialState, action) =>
       // );
 
       // const mainPosts = state.mainPosts;
-      // mainPosts[targetIdx].Comments = [
+      // mainPosts[targetIdx].comments = [
       //   newComment,
-      //   ...mainPosts[targetIdx].Comments,
+      //   ...mainPosts[targetIdx].comments,
       // ];
 
       // return {
@@ -274,6 +299,25 @@ const postReducer = (state = initialState, action) =>
           isRemovePostDone: false,
           isRemoveCommentDone: false,
         };
+
+      case LOAD_POSTS_REQUEST:
+        draft.isProcessing = true;
+        draft.isAddPostDone = false;
+        break;
+
+      case LOAD_POSTS_SUCCESS:
+        draft.mainPosts = action.data.concat(draft.mainPosts);
+        draft.isProcessing = false;
+        draft.isAddPostDone = true;
+        draft.hasMorePosts = draft.mainPosts.length < 50;
+        break;
+
+      case LOAD_POSTS_FAILURE:
+        draft.isProcessing = false;
+        draft.isAddPostDone = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
 
       default:
         return state;

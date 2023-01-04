@@ -53,7 +53,7 @@ function AppLayout({ children }) {
               </Link>
             ),
           },
-          { label: <SearchInput enterButton /> },
+
           !isLoggedIn && {
             label: (
               <Link href="/signup">

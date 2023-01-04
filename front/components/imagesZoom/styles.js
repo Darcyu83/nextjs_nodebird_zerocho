@@ -41,12 +41,12 @@ export const SliderWrapper = styled.div`
 export const ImgWrapper = styled.div`
   display: flex !important;
   align-items: center;
-
   padding: 32px;
   height: 750px;
 
   & img {
     margin: 0 auto;
+    max-width: 100%;
     max-height: 750px;
     vertical-align: middle;
   }
