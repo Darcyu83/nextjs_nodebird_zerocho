@@ -6,7 +6,7 @@
     "ecmaFeatures": { "jsx": true }
   },
   "env": { "browser": true, "node": true, "es6": true },
-  "extends": ["eslint:recommended", "airbnb"],
+  "extends": ["eslint:recommended", "plugin:import/recommended", "airbnb"],
   "plugins": ["import", "react-hooks"],
   "rules": {
     //If you're using NEXT.js then you do not require to import React at top of files,

@@ -144,6 +144,44 @@ export const signupFailureAction = (error) => {
   };
 };
 
+export const unfollowRequestAction = (data) => {
+  return {
+    type: UNFOLLOW_REQUEST,
+    data,
+  };
+};
+export const unfollowSuccessAction = (data) => {
+  return {
+    type: UNFOLLOW_SUCCESS,
+    data,
+  };
+};
+export const unfollowFailureAction = (error) => {
+  return {
+    type: UNFOLLOW_FAILURE,
+    error,
+  };
+};
+
+export const followRequestAction = (data) => {
+  return {
+    type: FOLLOW_REQUEST,
+    data,
+  };
+};
+export const followSuccessAction = (data) => {
+  return {
+    type: FOLLOW_SUCCESS,
+    data,
+  };
+};
+export const followFailureAction = (error) => {
+  return {
+    type: FOLLOW_FAILURE,
+    error,
+  };
+};
+
 export const changeNicknameRequestAction = (data) => {
   return {
     type: LOGOUT_REQUEST,
@@ -284,6 +322,40 @@ const userReducer = (state = initialState, action) =>
             ),
           },
         };
+
+      case FOLLOW_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case FOLLOW_SUCCESS:
+        draft.isProcessing = false;
+
+        draft.me.followings = draft.me.followings.concat(action.data);
+        break;
+
+      case FOLLOW_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
+      case UNFOLLOW_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case UNFOLLOW_SUCCESS:
+        draft.isProcessing = false;
+        draft.me.followings = draft.me.followings.filter(
+          (obj) => obj.nickname !== action.data.nickname
+        );
+        break;
+
+      case UNFOLLOW_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+
+        break;
       default:
         return state;
     }

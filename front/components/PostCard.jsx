@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { REMOVE_POST_REQUEST } from "../redux/reducers/post";
+import FollowButton from "./FollowButton";
 import PostCommentForm from "./forms/PostCommentForm";
 import PostCardContent from "./PostCardContent";
 import PostCommentCardList from "./PostCommentCardList";
@@ -76,6 +77,7 @@ function PostCard({ post, userId }) {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        extra={userId && <FollowButton post={post} />}
       >
         <Card.Meta
           avatar={<Avatar>{post.user.nickname[0].toUpperCase()}</Avatar>}

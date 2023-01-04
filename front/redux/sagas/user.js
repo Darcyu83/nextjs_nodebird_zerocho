@@ -13,6 +13,9 @@ import {
   delay,
 } from "redux-saga/effects";
 import {
+  FOLLOW_FAILURE,
+  FOLLOW_REQUEST,
+  FOLLOW_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -22,8 +25,10 @@ import {
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESS,
+  UNFOLLOW_FAILURE,
+  UNFOLLOW_REQUEST,
+  UNFOLLOW_SUCCESS,
 } from "../reducers/user";
-import axios from "axios";
 /*
  all([함수,함수들]) : 함수들을 동시에 실행한다.
  fork(함수) : 비동기 함수를 실행한다.(non-blocking)
@@ -92,6 +97,25 @@ function* signupFetch(action) {
   }
 }
 
+function* followFetch(action) {
+  try {
+    yield delay(1000);
+
+    yield put({ type: FOLLOW_SUCCESS, data: { nickname: action.data } });
+  } catch (error) {
+    yield put({ type: FOLLOW_FAILURE, error });
+  }
+}
+function* unfollowFetch(action) {
+  try {
+    yield delay(1000);
+
+    yield put({ type: UNFOLLOW_SUCCESS, data: { nickname: action.data } });
+  } catch (error) {
+    yield put({ type: UNFOLLOW_FAILURE, error });
+  }
+}
+
 function* watchLogin() {
   //   while (true) {
   //     yield take(LOGIN_REQUEST, loginFetch);
@@ -107,6 +131,19 @@ function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signupFetch);
 }
 
+function* watchFollow() {
+  yield takeLatest(FOLLOW_REQUEST, followFetch);
+}
+
+function* watchUnfollow() {
+  yield takeLatest(UNFOLLOW_REQUEST, unfollowFetch);
+}
 export default function* userSaga() {
-  yield all([fork(watchLogin), fork(watchLogout), fork(watchSignUp)]);
+  yield all([
+    fork(watchLogin),
+    fork(watchLogout),
+    fork(watchSignUp),
+    fork(watchFollow),
+    fork(watchUnfollow),
+  ]);
 }
