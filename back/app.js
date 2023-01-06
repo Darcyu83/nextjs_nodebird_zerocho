@@ -2,8 +2,20 @@
 // const http = require("http");
 
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const db = require("./models"); // db 연동
+
+// passport 설정
+const configurePassport = require("./passport");
+configurePassport();
+
+// Json으로 전달받은 값을 req 바디에 넣어줌
+app.use(express.json());
+
+app.use(cors({ origin: "http://localhost:3000", credentials: false }));
+// form submit 데이터 타입 req 바디에 넣어줌
+app.use(express.urlencoded({ extended: true }));
 
 db.sequelize
   .sync()
@@ -72,5 +84,7 @@ app.delete("/api/post", (req, res) => {
 });
 
 const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
 
 app.use("/posts", postRouter); // 공통된 부분 앞으로 빼냄
+app.use("/user", userRouter);

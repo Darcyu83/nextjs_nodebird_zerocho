@@ -13,25 +13,25 @@ const ButtonWrapper = styled.div`
 
 function LoginForm({ isProcessing }) {
   // const [id, setId] = useState("userId");
-  // const [pwd, setPwd] = useState("password");
+  // const [password, setpassword] = useState("password");
 
   // const onChangeId = useCallback((e) => {
   //   setId(e.target.value);
   // }, []);
 
-  // const onChangePwd = useCallback((e) => {
-  //   setPwd(e.target.value);
+  // const onChangePassword = useCallback((e) => {
+  //   setpassword(e.target.value);
   // }, []);
 
   const dispatch = useDispatch();
   const [email, onChangeEmail] = useInput();
-  const [pwd, onChangePwd] = useInput();
+  const [password, onChangePassword] = useInput();
 
   // custom hook
   const onSubmitForm = useCallback(() => {
-    console.log(email, pwd);
-    dispatch(loginRequestAction({ email, pwd }));
-  }, [email, pwd]);
+    console.log(email, password);
+    dispatch(loginRequestAction({ email, password }));
+  }, [email, password]);
 
   return (
     <div style={{}}>
@@ -47,9 +47,14 @@ function LoginForm({ isProcessing }) {
           />
         </div>
         <div>
-          <label htmlFor="user-pwd">비밀번호</label>
+          <label htmlFor="user-password">비밀번호</label>
           <br />
-          <Input name="user-pwd" value={pwd} onChange={onChangePwd} required />
+          <Input
+            name="user-password"
+            value={password}
+            onChange={onChangePassword}
+            required
+          />
         </div>
 
         <ButtonWrapper>

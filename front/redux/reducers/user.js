@@ -4,7 +4,7 @@ import { HYDRATE } from "next-redux-wrapper";
 export const initialState = {
   me: {
     id: null,
-    pwd: null,
+    password: null,
     nickname: null,
     age: null,
     posts: null,
@@ -22,7 +22,7 @@ export const initialState = {
 
 const dummyUser = (action) => ({
   id: action.data.email,
-  pwd: action.data.pwd,
+  password: action.data.password,
   nickname: "yuds",
   age: 100,
   posts: [{ id: "1" }],
@@ -127,19 +127,19 @@ export const logoutFailureAction = (error) => {
 
 export const signupRequestAction = (data) => {
   return {
-    type: LOGOUT_REQUEST,
+    type: SIGN_UP_REQUEST,
     data,
   };
 };
 export const signupSuccessAction = (data) => {
   return {
-    type: LOGOUT_SUCCESS,
+    type: SIGN_UP_SUCCESS,
     data,
   };
 };
 export const signupFailureAction = (error) => {
   return {
-    type: LOGOUT_FAILURE,
+    type: SIGN_UP_FAILURE,
     error,
   };
 };
@@ -214,13 +214,14 @@ const userReducer = (state = initialState, action) =>
           isProcessing: true,
           isErrorOccured: false,
           error: null,
+          isSignedUp: false,
         };
 
       case SIGN_UP_SUCCESS:
         return {
           ...state,
           me: { ...dummyUser(action) },
-          isLoggedIn: false,
+          isLoggedIn: true,
           isProcessing: false,
           isSignedUp: true,
         };
@@ -247,6 +248,7 @@ const userReducer = (state = initialState, action) =>
           me: { ...dummyUser(action) },
           isLoggedIn: true,
           isProcessing: false,
+          isSignedUp: true,
         };
 
       case LOGIN_FAILURE:

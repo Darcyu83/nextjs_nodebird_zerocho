@@ -29,6 +29,8 @@ import {
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
 } from "../reducers/user";
+
+import axios from "axios";
 /*
  all([함수,함수들]) : 함수들을 동시에 실행한다.
  fork(함수) : 비동기 함수를 실행한다.(non-blocking)
@@ -56,26 +58,27 @@ import {
 
 1-4 takeLatest : 마지막 요청을 실행 (요청은 2번 들어가도 -> 응답은 2번 중 1번을 취소한다의 의미)
     server 쪽에서 중복값 체크 
- 
- 
-
-
- 
 
 */
 
-const loginAPI = () => {
-  //   return axios.post("/api/login");
+const loginAPI = (params) => {
+  return axios.post("/user/login", params);
+};
+const logoutAPI = (params) => {
+  return axios.post("/user/logout", params);
+};
+
+const signupAPI = (params) => {
+  return axios.post("/user", params);
 };
 
 function* loginFetch(action) {
   try {
-    // const response = yield call(loginAPI, action.params);
-    const response = yield delay(2000);
+    const response = yield call(loginAPI, action.data);
 
-    yield put({ type: LOGIN_SUCCESS, data: action.data });
+    yield put({ type: LOGIN_SUCCESS, data: response.data });
   } catch (error) {
-    yield put({ type: LOGIN_FAILURE, error });
+    yield put({ type: LOGIN_FAILURE, error: error.response.data });
   }
 }
 
@@ -84,16 +87,16 @@ function* logoutFetch(action) {
     yield delay(1000);
     yield put({ type: LOGOUT_SUCCESS });
   } catch (error) {
-    yield put({ type: LOGOUT_FAILURE, error });
+    yield put({ type: LOGOUT_FAILURE, error: error.response.data });
   }
 }
 
 function* signupFetch(action) {
   try {
-    yield delay(1000);
+    yield call(signupAPI, action.data);
     yield put({ type: SIGN_UP_SUCCESS, data: action.data });
   } catch (error) {
-    yield put({ type: SIGN_UP_FAILURE, error });
+    yield put({ type: SIGN_UP_FAILURE, error: error.response.data });
   }
 }
 
@@ -103,7 +106,7 @@ function* followFetch(action) {
 
     yield put({ type: FOLLOW_SUCCESS, data: { nickname: action.data } });
   } catch (error) {
-    yield put({ type: FOLLOW_FAILURE, error });
+    yield put({ type: FOLLOW_FAILURE, error: error.response.data });
   }
 }
 function* unfollowFetch(action) {
@@ -112,7 +115,7 @@ function* unfollowFetch(action) {
 
     yield put({ type: UNFOLLOW_SUCCESS, data: { nickname: action.data } });
   } catch (error) {
-    yield put({ type: UNFOLLOW_FAILURE, error });
+    yield put({ type: UNFOLLOW_FAILURE, error: error.response.data });
   }
 }
 

@@ -2,10 +2,12 @@ import AppLayout from "../components/layout/AppLayout";
 import Head from "next/head";
 import Link from "next/link";
 import { Button, Checkbox, Form, Input } from "antd";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
+import { signupRequestAction } from "../redux/reducers/user";
+import Router from "next/router";
 
 const ErrorMessage = styled.p`
   color: red;
@@ -14,22 +16,22 @@ const FormContainer = styled(Form)``;
 
 function Signup() {
   // const [id, setId] = useState("");
-  // const [pwd, setPwd] = useState("");
+  // const [password, setpassword] = useState("");
   // const [nickname, setNickname] = useState("");
 
   // const onChangeId = useCallback((e) => {
   //   setId(e.target.value);
   // }, []);
 
-  // const onChangePwd = useCallback((e) => {
-  //   setPwd(e.target.value);
+  // const onChangepassword = useCallback((e) => {
+  //   setpassword(e.target.value);
   // }, []);
 
   // const onChangeNickname = useCallback((e) => {
   //   setNickname(e.target.value);
   // }, []);
   const [email, onChangeEmail] = useInput();
-  const [pwd, onChangePwd] = useInput();
+  const [password, onChangepassword] = useInput();
   const [nickname, onChangeNickname] = useInput();
 
   const [passwordCheck, setPasswordCheck] = useState("");
@@ -41,9 +43,9 @@ function Signup() {
   const onChangePasswordCheck = useCallback(
     (e) => {
       setPasswordCheck(e.target.value);
-      setPasswordErr(e.target.value !== pwd);
+      setPasswordErr(e.target.value !== password);
     },
-    [pwd]
+    [password]
   );
 
   const onChangeTerm = useCallback((e) => {
@@ -57,13 +59,21 @@ function Signup() {
 
   const dispatch = useDispatch();
 
-  const { isProcessing } = useSelector((state) => state.user);
+  const { isSignedUp, isProcessing, isErrorOccured, error } = useSelector(
+    (state) => state.user
+  );
 
   const onSubmit = useCallback(() => {
     setTerm(true);
 
-    dispatch(signupRequestAction({ email, pwd }));
-  }, [email, pwd]);
+    dispatch(signupRequestAction({ email, nickname, password }));
+  }, [email, password, nickname]);
+
+  useEffect(() => {
+    if (isSignedUp) {
+      Router.push("/");
+    }
+  }, [isSignedUp]);
 
   return (
     <AppLayout style={{}}>
@@ -82,17 +92,23 @@ function Signup() {
             onChange={onChangeEmail}
             required
           />
+          {isErrorOccured && <ErrorMessage>{error}</ErrorMessage>}
         </div>
         <div>
-          <label htmlFor="user-pwd">패스워드</label>
-          <br />
-          <Input name="user-pwd" value={pwd} onChange={onChangePwd} required />
-        </div>
-        <div>
-          <label htmlFor="user-pwd">패스워드 확인</label>
+          <label htmlFor="user-password">패스워드</label>
           <br />
           <Input
-            name="user-pwd"
+            name="user-password"
+            value={password}
+            onChange={onChangepassword}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="user-password">패스워드 확인</label>
+          <br />
+          <Input
+            name="user-password"
             value={passwordCheck}
             onChange={onChangePasswordCheck}
             required
