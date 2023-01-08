@@ -203,23 +203,13 @@ const postReducer = (state = initialState, action) =>
       //   error: null,
       // };
       case ADD_COMMENT_SUCCESS:
-        // 새로운 코멘트
-        const newComment = {
-          user: {
-            id: action.data.userId,
-            nickname: "reply:: " + action.data.userId,
-          },
-          id: Math.random() * 100000,
-          content: action.data.content,
-        };
-
         // 코멘트 추가할 원글 찾기
         const post = draft.mainPosts.find(
           (post) => post.id === action.data.postId
         );
 
         // 맨앞으로 추가
-        post.comments.unshift(newComment);
+        post.comments.unshift(action.data);
         draft.isAddCommentDone = true;
         draft.isProcessing = false;
         break;

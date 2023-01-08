@@ -6,10 +6,10 @@ export const initialState = {
     id: null,
     password: null,
     nickname: null,
-    age: null,
-    posts: null,
-    followings: null,
-    followers: null,
+
+    posts: [],
+    followings: [],
+    followers: [],
   },
 
   isSignedUp: false,
@@ -220,7 +220,7 @@ const userReducer = (state = initialState, action) =>
       case SIGN_UP_SUCCESS:
         return {
           ...state,
-          me: { ...dummyUser(action) },
+          me: { ...state.me, ...action.data },
           isLoggedIn: true,
           isProcessing: false,
           isSignedUp: true,
@@ -245,7 +245,7 @@ const userReducer = (state = initialState, action) =>
       case LOGIN_SUCCESS:
         return {
           ...state,
-          me: { ...dummyUser(action) },
+          me: { ...state.me, ...action.data },
           isLoggedIn: true,
           isProcessing: false,
           isSignedUp: true,

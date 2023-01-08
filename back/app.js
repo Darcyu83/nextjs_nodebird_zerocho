@@ -3,8 +3,18 @@
 
 const express = require("express");
 const cors = require("cors");
+const passport = require("passport");
+
+//환경변수 설정
+const dotenv = require("dotenv");
+dotenv.config();
+
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
 const app = express();
 const db = require("./models"); // db 연동
+
+//app.use 는 미들웨어 설정들
 
 // passport 설정
 const configurePassport = require("./passport");
@@ -13,7 +23,23 @@ configurePassport();
 // Json으로 전달받은 값을 req 바디에 넣어줌
 app.use(express.json());
 
-app.use(cors({ origin: "http://localhost:3000", credentials: false }));
+// Cookie 미들웨어 사용
+app.use(cookieParser(process.env.COOKIE_SECRET));
+// Session 미들웨어 사용
+app.use(
+  session({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+//credentials : 쿠키 전달하고 싶을때
+//front : axios.default.withCredential true => 쿠키 전달
+//back : cors credentials true
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 // form submit 데이터 타입 req 바디에 넣어줌
 app.use(express.urlencoded({ extended: true }));
 
@@ -36,7 +62,8 @@ db.sequelize
 // });
 
 app.get("/", (req, res) => {
-  console.log(req.url, req.method);
+  console.log("\n", req.url, req.method);
+  console.log("\n", req.isAuthenticated());
 
   res.send("hello express");
 });
@@ -88,3 +115,7 @@ const userRouter = require("./routes/user");
 
 app.use("/posts", postRouter); // 공통된 부분 앞으로 빼냄
 app.use("/user", userRouter);
+
+// 에러처리 미들웨어 (내장형으로 명시할 필요 없음)
+// => 특별하게처리 할때 구현
+app.use((err, req, res, next) => {});

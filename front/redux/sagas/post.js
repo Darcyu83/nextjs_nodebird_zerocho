@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   delay,
   fork,
@@ -25,14 +26,30 @@ import {
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
+function addPostAPI(params) {
+  return axios.post(
+    "/posts/post",
+    { content: params }
+
+    //front : axios.default.withCredential true => 쿠키 전달
+    //back : cors credentials true
+  );
+}
+
+function addCommentAPI(params) {
+  return axios.post(
+    `/posts/post/${params.postId}comment`,
+    { content: params },
+    { withCredentials: true }
+  );
+}
+
 function* addPostFetch(action) {
   try {
-    yield delay(1000);
+    const result = yield call(addPostAPI, action.data);
 
-    const _dummyPost = dummyPost(action);
-
-    yield put({ type: ADD_POST_SUCCESS, data: _dummyPost });
-    yield put({ type: ADD_POST_TO_ME, data: { postId: _dummyPost.id } });
+    yield put({ type: ADD_POST_SUCCESS, data: result.data });
+    yield put({ type: ADD_POST_TO_ME, data: { postId: result.id } });
   } catch (error) {
     yield put({ type: ADD_POST_FAILURE, error });
   }
@@ -40,9 +57,9 @@ function* addPostFetch(action) {
 
 function* addCommentFetch(action) {
   try {
-    yield delay(1000);
+    const result = yield call(addCommentAPI, action.data);
 
-    yield put({ type: ADD_COMMENT_SUCCESS, data: action.data });
+    yield put({ type: ADD_COMMENT_SUCCESS, data: result.data });
   } catch (error) {
     yield put({ type: ADD_COMMENT_FAILURE, error });
   }

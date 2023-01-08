@@ -59,7 +59,7 @@ function Signup() {
 
   const dispatch = useDispatch();
 
-  const { isSignedUp, isProcessing, isErrorOccured, error } = useSelector(
+  const { isLoggedIn, isProcessing, isErrorOccured, error } = useSelector(
     (state) => state.user
   );
 
@@ -70,10 +70,10 @@ function Signup() {
   }, [email, password, nickname]);
 
   useEffect(() => {
-    if (isSignedUp) {
-      Router.push("/");
+    if (isLoggedIn) {
+      Router.replace("/");
     }
-  }, [isSignedUp]);
+  }, [isLoggedIn]);
 
   return (
     <AppLayout style={{}}>
@@ -92,7 +92,9 @@ function Signup() {
             onChange={onChangeEmail}
             required
           />
-          {isErrorOccured && <ErrorMessage>{error}</ErrorMessage>}
+          {isErrorOccured && (
+            <ErrorMessage>{`${JSON.stringify(error)}`}</ErrorMessage>
+          )}
         </div>
         <div>
           <label htmlFor="user-password">패스워드</label>
