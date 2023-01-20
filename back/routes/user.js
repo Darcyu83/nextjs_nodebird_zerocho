@@ -9,6 +9,18 @@ const { User, Post } = require("../models");
 // 유저 로그인/아웃 미들웨어
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
+router.get("/", async (req, res, next) => {
+  try {
+    if (!req.user) return res.status(200).json(null);
+
+    const user = await User.findOne({ where: { id: req.user.id } });
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(`${req.url} :: error : `, error);
+    next(error);
+  }
+});
+
 /**
  * POST
  * /user/logout

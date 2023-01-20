@@ -16,6 +16,9 @@ import {
   FOLLOW_FAILURE,
   FOLLOW_REQUEST,
   FOLLOW_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -73,6 +76,10 @@ const signupAPI = (params) => {
   return axios.post("/user", params);
 };
 
+const loadMyInfoAPI = () => {
+  return axios.get("/user");
+};
+
 function* loginFetch(action) {
   try {
     const result = yield call(loginAPI, action.data);
@@ -126,6 +133,20 @@ function* unfollowFetch(action) {
   }
 }
 
+function* loadMyInfoFetch(action) {
+  try {
+    console.log(
+      `%c[ sagas/user.js ]::  : `,
+      "background-color: teal; color: white;"
+    );
+    const result = yield call(loadMyInfoAPI);
+
+    yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data });
+  } catch (error) {
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: LOAD_MY_INFO_FAILURE, error: error });
+  }
+}
 function* watchLogin() {
   //   while (true) {
   //     yield take(LOGIN_REQUEST, loginFetch);
@@ -148,6 +169,10 @@ function* watchFollow() {
 function* watchUnfollow() {
   yield takeLatest(UNFOLLOW_REQUEST, unfollowFetch);
 }
+
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfoFetch);
+}
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -155,5 +180,6 @@ export default function* userSaga() {
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),
+    fork(watchLoadMyInfo),
   ]);
 }

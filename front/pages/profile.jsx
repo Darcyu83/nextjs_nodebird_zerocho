@@ -32,10 +32,10 @@ function profile() {
         {/* 팔로우 리스트 */}
         <FollowCardList
           header={"팔로잉 목록"}
-          data={!me ? [] : me.followings}
+          data={!me ? [] : me.Followings}
         />
         {/* 팔로워 리스트 */}
-        <FollowCardList header={"팔로워 목록"} data={!me ? [] : me.followers} />
+        <FollowCardList header={"팔로워 목록"} data={!me ? [] : me.Followers} />
       </AppLayout>
     </>
   );

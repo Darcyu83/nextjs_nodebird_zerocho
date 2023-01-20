@@ -36,7 +36,8 @@ function LoginForm({ isProcessing, error }) {
   useEffect(() => {
     if (error) {
       console.log(error?.response?.data);
-      alert(error.response.data);
+      if (error?.response?.data) return alert(error.response.data);
+      alert(error);
     }
   }, [error]);
   return (

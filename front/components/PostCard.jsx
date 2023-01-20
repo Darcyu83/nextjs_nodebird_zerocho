@@ -17,7 +17,8 @@ import PostCardContent from "./PostCardContent";
 import PostCommentCardList from "./PostCommentCardList";
 import PostImage from "./PostImage";
 
-function PostCard({ post, userId }) {
+function PostCard({ post }) {
+  const me = useSelector((state) => state.user.me);
   const [liked, setLiked] = useState(false);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
 
@@ -40,7 +41,9 @@ function PostCard({ post, userId }) {
     <div>
       <Card
         style={{ marginBottom: 10 }}
-        cover={post.images[0] && <PostImage images={post.images} />}
+        cover={
+          post.images && post.images[0] && <PostImage images={post.images} />
+        }
         actions={[
           <RetweetOutlined key={"retweet"} />,
           liked ? (
@@ -57,7 +60,7 @@ function PostCard({ post, userId }) {
             key="Ellipsis"
             content={
               <ButtonGroup>
-                {userId === post.user.id && (
+                {me && me.id === post.User.id && (
                   <>
                     <Button>수정</Button>
                     <Button
@@ -70,31 +73,31 @@ function PostCard({ post, userId }) {
                     </Button>
                   </>
                 )}
-                {userId !== post.user.id && <Button>신고</Button>}
+                {me && me.id !== post.User.id && <Button>신고</Button>}
               </ButtonGroup>
             }
           >
             <EllipsisOutlined />
           </Popover>,
         ]}
-        extra={userId && <FollowButton post={post} />}
+        extra={me && <FollowButton post={post} />}
       >
         <Card.Meta
-          avatar={<Avatar>{post.user.nickname[0].toUpperCase()}</Avatar>}
-          title={post.user.nickname}
+          avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}
+          title={post.User.nickname}
           description={<PostCardContent content={post.content} />}
         />
       </Card>
       {isCommentFormOpen && <PostCommentForm post={post} />}
 
-      <PostCommentCardList comments={post.comments} />
+      <PostCommentCardList comments={post.Comments} />
     </div>
   );
 }
 
 PostCard.propTypes = {
   post: PropTypes.object,
-  userId: PropTypes.string,
+  userId: PropTypes.number,
 };
 
 export default PostCard;

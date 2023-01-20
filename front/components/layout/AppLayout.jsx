@@ -33,6 +33,7 @@ function AppLayout({ children }) {
   const { isLoggedIn, isProcessing, error } = useSelector(
     (state) => state.user
   );
+
   return (
     <div style={{}}>
       <Global />

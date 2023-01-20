@@ -9,7 +9,7 @@ const { Meta } = Card;
 function UserProfile() {
   const {
     isProcessing,
-    me: { posts, nickname, followings, followers },
+    me: { Posts, nickname, Followings, Followers },
   } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
@@ -23,15 +23,15 @@ function UserProfile() {
         <div key="twit">
           Twit
           <br />
-          {posts.length}
+          {Posts.length}
         </div>,
-        <div key="followed">
+        <div key="Followed">
           Followed <br />
-          {followings.length}
+          {Followings.length}
         </div>,
-        <div key="followings">
+        <div key="Followings">
           Followings <br />
-          {followers.length}
+          {Followers.length}
         </div>,
       ]}
     >

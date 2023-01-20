@@ -31,6 +31,9 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET, // cookie sessionKey생성시 사용
+    cookie: {
+      maxAge: 1000 * 60,
+    },
   })
 );
 app.use(passport.initialize());

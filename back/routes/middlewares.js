@@ -1,9 +1,11 @@
-// 로그아웃할때 로그인 되어있음
+// 로그아웃할때 로그인 되어있는지 체크
+// req.user가 값을 가짐
 exports.isLoggedIn = (req, res, next) => {
   console.log(
     `\n\n\n[ isLoggedIn middleware ]::  req.user: `,
     `${JSON.stringify(req.user)}\n\n\n`
   );
+
   if (req.isAuthenticated()) {
     console.log("Login...ING " + "\n\n\n");
     next();
@@ -21,6 +23,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     `\n\n\n[ isNotLoggedIn middleware ]::  req.user: `,
     `${JSON.stringify(req.user)}\n\n\n`
   );
+
   if (!req.isAuthenticated()) {
     console.log("Not Login..." + "\n\n\n");
     next(); //=> 다음 미들웨어로

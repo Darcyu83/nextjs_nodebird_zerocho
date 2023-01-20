@@ -6,8 +6,6 @@ import { LOAD_POSTS_REQUEST } from "../redux/reducers/post";
 import PostCard from "./PostCard";
 
 function PostCardList({ mainPosts }) {
-  const userId = useSelector((state) => state.user.me.id);
-
   const { hasMorePosts, isProcessing } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
@@ -39,9 +37,9 @@ function PostCardList({ mainPosts }) {
 
   return (
     <List>
-      {mainPosts.map((post) => (
-        <List.Item key={post.id + ""} style={{ marginTop: 20 }}>
-          <PostCard post={post} userId={userId} />
+      {mainPosts.map((post, idx) => (
+        <List.Item key={"post_" + post.id + idx} style={{ marginTop: 20 }}>
+          <PostCard post={post} />
         </List.Item>
       ))}
     </List>

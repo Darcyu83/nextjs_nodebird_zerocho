@@ -35,6 +35,16 @@ import { backUrl } from "../../config/config";
 import axios from "axios";
 
 axios.defaults.baseURL = backUrl;
+// cors : 이슈 해결
+// 다른 도메인에서 호출시 쿠키 전달안되서 로그인해도 오류가 발생
+// localhost:3000 request
+// localhost:5000 response 401 에러 unauthorized
+
+// front:
+// axios.defaults.withCredentials = true;
+
+// backend :
+// app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 axios.defaults.withCredentials = true;
 
 export default function* rootSaga() {

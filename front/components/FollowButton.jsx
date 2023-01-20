@@ -10,7 +10,7 @@ import {
 function FollowButton({ post }) {
   const { me, isProcessing } = useSelector((state) => state.user);
 
-  const isFollowing = me.followings.some(
+  const isFollowing = me.Followings.some(
     ({ nickname }) => nickname === post.user.nickname
   );
 

@@ -8,8 +8,8 @@ export const initialState = {
     nickname: null,
 
     posts: [],
-    followings: [],
-    followers: [],
+    Followings: [],
+    Followers: [],
   },
 
   isSignedUp: false,
@@ -26,12 +26,12 @@ const dummyUser = (action) => ({
   nickname: "yuds",
   age: 100,
   posts: [{ id: "1" }],
-  followings: [
+  Followings: [
     { nickname: "person 1" },
     { nickname: "person 2" },
     { nickname: "person 3" },
   ],
-  followers: [
+  Followers: [
     { nickname: "follower 1" },
     { nickname: "follower 2" },
     { nickname: "follower 3" },
@@ -64,6 +64,10 @@ export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
+
+export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
+export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
+export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 
 export const changeNickname = (data) => {
   return {
@@ -201,6 +205,10 @@ export const changeNicknameFailureAction = (error) => {
   };
 };
 
+export const loadMyInfoAction = () => {
+  return { type: LOAD_MY_INFO_REQUEST };
+};
+
 // Immer 적용
 const userReducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -332,7 +340,7 @@ const userReducer = (state = initialState, action) =>
       case FOLLOW_SUCCESS:
         draft.isProcessing = false;
 
-        draft.me.followings = draft.me.followings.concat(action.data);
+        draft.me.Followings = draft.me.Followings.concat(action.data);
         break;
 
       case FOLLOW_FAILURE:
@@ -347,7 +355,7 @@ const userReducer = (state = initialState, action) =>
 
       case UNFOLLOW_SUCCESS:
         draft.isProcessing = false;
-        draft.me.followings = draft.me.followings.filter(
+        draft.me.Followings = draft.me.Followings.filter(
           (obj) => obj.nickname !== action.data.nickname
         );
         break;
@@ -358,6 +366,24 @@ const userReducer = (state = initialState, action) =>
         draft.error = action.error;
 
         break;
+
+      case LOAD_MY_INFO_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case LOAD_MY_INFO_SUCCESS:
+        draft.me = action.data;
+        draft.isProcessing = false;
+        draft.isErrorOccured = false;
+        draft.error = null;
+        break;
+
+      case LOAD_MY_INFO_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
       default:
         return state;
     }

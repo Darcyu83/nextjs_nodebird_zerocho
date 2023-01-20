@@ -34,7 +34,7 @@ export const generateDummyPostData = (qnty) => {
               }
             : { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
         ],
-        comments: [
+        Comments: [
           {
             user: { id: "21", nickname: "hoho" },
             id: 1,
@@ -98,7 +98,7 @@ export const dummyPost = (action) => ({
     },
     { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
   ],
-  comments: [
+  Comments: [
     { user: { id: "21", nickname: "khoirahoho" }, content: "Oh first Post" },
     {
       user: { id: "31", nickname: "lhahahoira" },
@@ -209,7 +209,7 @@ const postReducer = (state = initialState, action) =>
         );
 
         // 맨앞으로 추가
-        post.comments.unshift(action.data);
+        post.Comments.unshift(action.data);
         draft.isAddCommentDone = true;
         draft.isProcessing = false;
         break;
@@ -219,9 +219,9 @@ const postReducer = (state = initialState, action) =>
       // );
 
       // const mainPosts = state.mainPosts;
-      // mainPosts[targetIdx].comments = [
+      // mainPosts[targetIdx].Comments = [
       //   newComment,
-      //   ...mainPosts[targetIdx].comments,
+      //   ...mainPosts[targetIdx].Comments,
       // ];
 
       // return {
