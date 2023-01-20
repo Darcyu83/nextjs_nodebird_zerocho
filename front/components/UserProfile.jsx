@@ -35,7 +35,10 @@ function UserProfile() {
         </div>,
       ]}
     >
-      <Meta avatar={<Avatar>{nickname}</Avatar>} title={nickname} />
+      <Meta
+        avatar={<Avatar>{nickname && nickname[0]}</Avatar>}
+        title={nickname}
+      />
       <Button onClick={onLogOut} loading={isProcessing}>
         로그아웃
       </Button>

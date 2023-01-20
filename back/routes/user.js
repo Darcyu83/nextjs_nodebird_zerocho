@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 
 const { User, Post } = require("../models");
-const db = require("../models");
 
 // 유저 로그인/아웃 미들웨어
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
@@ -15,10 +14,10 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
  * /user/logout
  */
 router.post("/logout", isLoggedIn, (req, res, next) => {
+  req.session.destroy();
   req.logOut(() => {
     console.log("logout completed");
   });
-  req.session.destroy();
 
   res.json({ result: "OK" });
 });
@@ -28,24 +27,34 @@ router.post("/logout", isLoggedIn, (req, res, next) => {
  * /user/login
  */
 router.post("/login", isNotLoggedIn, (req, res, next) => {
-  passport.authenticate("local", (serverErr, userData, clientErrorInfo) => {
+  passport.authenticate("local", (serverErr, userData, info) => {
     if (serverErr) {
       console.log("serverErr", serverErr);
       return next(serverErr);
     }
 
-    if (clientErrorInfo) {
+    if (info) {
       // 400 Bad Request
-      // 401 비인증 않음 : Unauthorized
-      // 403 접근권리 없음 : Forbidden : 클라이언트를 식별하고 있음
+      // 401 허가 안됨 : 비인증 : Unauthorized
+      // 403 금지: 접근권리 없음 : Forbidden : 클라이언트를 식별하고 있음
       // 404 Not Found
 
-      console.log("clientErrorInfo", clientErrorInfo);
-      return res.status(401).send(clientErrorInfo.reason);
+      console.log("info", info);
+      return res.status(401).send(info.reason);
     }
 
-    //passport 로그인 실질적인
+    //passport 실질적인 로그인 절차
+
+    // req.login()실행과 동시에 serializeUser 실행됨
+
+    // req.login()은 세션 키 생성 하고 쿠키에 세션키 설정해서 클라이언트로 보냄
+    // setHeader('Cookie', key) 설정
+
+    // serializeUser()는 세션 정보 저장
+    // 세션 설정 : <임의의 키, user.id> 형식으로 저장함. serializeUser()
+
     return req.login(userData, async (loginErr) => {
+      // passport 처리 에러
       if (loginErr) {
         console.log("loginErr", loginErr);
         return next(loginErr);
@@ -90,7 +99,7 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
 
       // 200 : 성공
       // 201 : 생성됨
-      // 300 : 리다이렉트
+      // 300 : 리다이렉트 or 캐싱
       // 400 : 클라이언트 에러
       // 500 : 서버에러
     }

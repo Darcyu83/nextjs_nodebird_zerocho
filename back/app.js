@@ -30,7 +30,7 @@ app.use(
   session({
     saveUninitialized: false,
     resave: false,
-    secret: process.env.COOKIE_SECRET,
+    secret: process.env.COOKIE_SECRET, // cookie sessionKey생성시 사용
   })
 );
 app.use(passport.initialize());
@@ -47,6 +47,7 @@ db.sequelize
   .sync()
   .then(() => console.log("db 연결 성공"))
   .catch(console.error);
+
 // 1 ======================================================
 
 // 2 ======================================================
@@ -68,16 +69,6 @@ app.get("/", (req, res) => {
   res.send("hello express");
 });
 // 2 ======================================================
-
-// 3 ======================================================
-// server.listen(4000, () => {
-//   console.log("서버 실행 중 port::4000");
-// });
-
-app.listen(5000, () => {
-  console.log("서버 실행 중 port::4000");
-});
-// 3 ======================================================
 
 /**
  *
@@ -119,3 +110,13 @@ app.use("/user", userRouter);
 // 에러처리 미들웨어 (내장형으로 명시할 필요 없음)
 // => 특별하게처리 할때 구현
 app.use((err, req, res, next) => {});
+
+// 3 ======================================================
+// server.listen(4000, () => {
+//   console.log("서버 실행 중 port::4000");
+// });
+
+app.listen(5000, () => {
+  console.log("서버 실행 중 port::4000");
+});
+// 3 ======================================================

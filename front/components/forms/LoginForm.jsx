@@ -1,5 +1,5 @@
 import { Button, Form, Input } from "antd";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -11,7 +11,7 @@ const ButtonWrapper = styled.div`
   margin-top: 10px;
 `;
 
-function LoginForm({ isProcessing }) {
+function LoginForm({ isProcessing, error }) {
   // const [id, setId] = useState("userId");
   // const [password, setpassword] = useState("password");
 
@@ -33,6 +33,12 @@ function LoginForm({ isProcessing }) {
     dispatch(loginRequestAction({ email, password }));
   }, [email, password]);
 
+  useEffect(() => {
+    if (error) {
+      console.log(error?.response?.data);
+      alert(error.response.data);
+    }
+  }, [error]);
   return (
     <div style={{}}>
       <Form method="post" onFinish={onSubmitForm}>

@@ -30,7 +30,9 @@ const Global = createGlobalStyle`
 
 `;
 function AppLayout({ children }) {
-  const { isLoggedIn, isProcessing } = useSelector((state) => state.user);
+  const { isLoggedIn, isProcessing, error } = useSelector(
+    (state) => state.user
+  );
   return (
     <div style={{}}>
       <Global />
@@ -94,7 +96,11 @@ function AppLayout({ children }) {
           {isLoggedIn ? (
             <UserProfile />
           ) : (
-            <LoginForm isLoggedIn={isLoggedIn} isProcessing={isProcessing} />
+            <LoginForm
+              isLoggedIn={isLoggedIn}
+              isProcessing={isProcessing}
+              error={error}
+            />
           )}
         </Col>
         <Col xs={24} md={12}>

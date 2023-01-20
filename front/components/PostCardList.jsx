@@ -40,7 +40,7 @@ function PostCardList({ mainPosts }) {
   return (
     <List>
       {mainPosts.map((post) => (
-        <List.Item key={post.id} style={{ marginTop: 20 }}>
+        <List.Item key={post.id + ""} style={{ marginTop: 20 }}>
           <PostCard post={post} userId={userId} />
         </List.Item>
       ))}

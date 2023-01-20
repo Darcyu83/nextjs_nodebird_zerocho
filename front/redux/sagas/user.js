@@ -79,8 +79,8 @@ function* loginFetch(action) {
 
     yield put({ type: LOGIN_SUCCESS, data: result.data.user });
   } catch (error) {
-    console.log("error=== ", error);
-    yield put({ type: LOGIN_FAILURE, error: error.message });
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: LOGIN_FAILURE, error });
   }
 }
 
@@ -89,8 +89,8 @@ function* logoutFetch(action) {
     const result = yield call(logoutAPI);
     yield put({ type: LOGOUT_SUCCESS });
   } catch (error) {
-    console.log("error=== ", error);
-    yield put({ type: LOGOUT_FAILURE, error: error.message });
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: LOGOUT_FAILURE, error });
   }
 }
 
@@ -100,8 +100,8 @@ function* signupFetch(action) {
     console.log("sign up result === ", result);
     yield put({ type: SIGN_UP_SUCCESS, data: result.data.user });
   } catch (error) {
-    console.log("error=== ", error);
-    yield put({ type: SIGN_UP_FAILURE, error: error.message });
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: SIGN_UP_FAILURE, error });
   }
 }
 
@@ -111,8 +111,8 @@ function* followFetch(action) {
 
     yield put({ type: FOLLOW_SUCCESS, data: { nickname: action.data } });
   } catch (error) {
-    console.log("error=== ", error);
-    yield put({ type: FOLLOW_FAILURE, error: error.message });
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: FOLLOW_FAILURE, error });
   }
 }
 function* unfollowFetch(action) {
@@ -121,8 +121,8 @@ function* unfollowFetch(action) {
 
     yield put({ type: UNFOLLOW_SUCCESS, data: { nickname: action.data } });
   } catch (error) {
-    console.log("error=== ", error);
-    yield put({ type: UNFOLLOW_FAILURE, error: error.message });
+    console.log("sagas/user.js error=== ", error);
+    yield put({ type: UNFOLLOW_FAILURE, error });
   }
 }
 
