@@ -30,9 +30,7 @@ const Global = createGlobalStyle`
 
 `;
 function AppLayout({ children }) {
-  const { isLoggedIn, isProcessing, error } = useSelector(
-    (state) => state.user
-  );
+  const { me, isProcessing, error } = useSelector((state) => state.user);
 
   return (
     <div style={{}}>
@@ -57,7 +55,7 @@ function AppLayout({ children }) {
             ),
           },
 
-          !isLoggedIn && {
+          !me && {
             label: (
               <Link href="/signup">
                 <p>회원가입</p>
@@ -82,7 +80,7 @@ function AppLayout({ children }) {
             enterButton
           />
         </Menu.Item>
-        {!isLoggedIn && (
+        {!me && (
           <Menu.Item key={"signup"}>
             <Link href="/signup">
               <p>회원가입</p>
@@ -94,14 +92,10 @@ function AppLayout({ children }) {
       {/* 모바일 => 데스크탑 순으로  */}
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? (
+          {me ? (
             <UserProfile />
           ) : (
-            <LoginForm
-              isLoggedIn={isLoggedIn}
-              isProcessing={isProcessing}
-              error={error}
-            />
+            <LoginForm me={me} isProcessing={isProcessing} error={error} />
           )}
         </Col>
         <Col xs={24} md={12}>

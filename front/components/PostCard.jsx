@@ -8,7 +8,7 @@ import {
 import { Avatar, Button, Card, Popover } from "antd";
 import ButtonGroup from "antd/lib/button/button-group";
 import PropTypes from "prop-types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { REMOVE_POST_REQUEST } from "../redux/reducers/post";
 import FollowButton from "./FollowButton";
@@ -34,13 +34,13 @@ function PostCard({ post }) {
   }, []);
 
   const onClickDelete = useCallback(() => {
-    dispatch({ type: REMOVE_POST_REQUEST, data: post });
+    dispatch({ type: REMOVE_POST_REQUEST, data: { id: post.id } });
   }, []);
 
   return (
-    <div>
+    <div style={{ width: "100%", height: "100%" }}>
       <Card
-        style={{ marginBottom: 10 }}
+        style={{}}
         cover={
           post.images && post.images[0] && <PostImage images={post.images} />
         }

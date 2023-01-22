@@ -1,35 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { Post, Comment, User } = require("../models");
+const { Post, Comment, User, Image } = require("../models");
 
 const { isLoggedIn } = require("./middlewares");
-// 조회
-router.get("/", async (req, res, next) => {
-  try {
-    const posts = await Post.findAll({
-      include: [{ model: User }, { model: Comment }],
-    });
-
-    res.status(200).json(posts);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
 
 // 등록 & 수정
-router.post("/post", isLoggedIn, async (req, res, next) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   console.log(`[ post.js ]::  : `, req.body);
 
   try {
     const post = await Post.create({
       UserId: req.user.id,
       content: req.body.content,
-    });
-
-    const fullPost = await Post.findOne({
-      where: { id: post.id },
-      include: [{ model: Image }, { model: Comment }, { model: User }],
     });
 
     // 리턴해야하는 데이터 형태
@@ -40,6 +22,10 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
     //   images: [],
     //   comments: [],
     // };
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [{ model: Image }, { model: Comment }, { model: User }],
+    });
 
     console.log(fullPost);
 
@@ -51,12 +37,12 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
 });
 
 // 삭제
-router.delete("/post", isLoggedIn, (req, res) => {
+router.delete("/", isLoggedIn, (req, res) => {
   res.send("hello delete posts");
 });
 
 // 코멘트 등록 & 수정
-router.post("/post/:postId/comment", isLoggedIn, async (req, res, next) => {
+router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
 
@@ -70,14 +56,19 @@ router.post("/post/:postId/comment", isLoggedIn, async (req, res, next) => {
       content: req.body.content,
     });
 
-    const beReturned = {
-      user: { id: comment.UserId, nickname: req.user.nickname },
-      id: comment.id,
-      postId: comment.PostId,
-      content: comment.content,
-    };
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [{ model: User, attributes: ["id", "nickname"] }],
+    });
 
-    res.status(201).json(beReturned);
+    // 리턴해야하는 데이터 구조
+    // {
+    //     user: { id: "21", nickname: "hoho" },
+    //     id: 1,
+    //     content: "Oh first Post",
+    //  };
+
+    res.status(201).json(fullComment);
   } catch (error) {
     console.log(error);
     next(error);

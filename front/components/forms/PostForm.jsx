@@ -7,6 +7,8 @@ import { addPostRequestAction } from "../../redux/reducers/post";
 
 const FormContainer = styled(Form)`
   margin: 10px 0 28px;
+  position: relative;
+  padding-bottom: 2rem;
 `;
 function PostForm() {
   const dispatch = useDispatch();
@@ -41,7 +43,12 @@ function PostForm() {
       />
       <div>
         <input type="file" multiple hidden ref={fileRef} />
-        <Button onClick={onClickImageUpload}>이미지 업로드</Button>
+        <Button
+          style={{ position: "absolute", bottom: -10, left: 0 }}
+          onClick={onClickImageUpload}
+        >
+          이미지 업로드
+        </Button>
       </div>
       <div>
         {imagePaths.map((img) => (
@@ -57,7 +64,7 @@ function PostForm() {
         loading={isProcessing}
         htmlType="submit"
         type="primary"
-        style={{ float: "right" }}
+        style={{ position: "absolute", bottom: -10, right: 0 }}
       >
         등록
       </Button>

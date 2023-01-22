@@ -4,7 +4,7 @@
 const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
-
+const morgan = require("morgan");
 //환경변수 설정
 const dotenv = require("dotenv");
 dotenv.config();
@@ -20,11 +20,22 @@ const db = require("./models"); // db 연동
 const configurePassport = require("./passport");
 configurePassport();
 
-// Json으로 전달받은 값을 req 바디에 넣어줌
+// Json으로 전달받은 값을 req.body 에 넣어줌
 app.use(express.json());
+
+// form submit 데이터 타입 req.body 에 넣어줌
+app.use(express.urlencoded({ extended: true }));
+
+app.use(morgan("dev"));
+
+//credentials : 쿠키 전달하고 싶을때
+//front : axios.default.withCredential true => 쿠키 전달
+//back : cors credentials true
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // Cookie 미들웨어 사용
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
 // Session 미들웨어 사용
 app.use(
   session({
@@ -32,19 +43,12 @@ app.use(
     resave: false,
     secret: process.env.COOKIE_SECRET, // cookie sessionKey생성시 사용
     cookie: {
-      maxAge: 1000 * 60,
+      maxAge: 1000 * 60 * 5,
     },
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-//credentials : 쿠키 전달하고 싶을때
-//front : axios.default.withCredential true => 쿠키 전달
-//back : cors credentials true
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-// form submit 데이터 타입 req 바디에 넣어줌
-app.use(express.urlencoded({ extended: true }));
 
 db.sequelize
   .sync()
@@ -106,8 +110,10 @@ app.delete("/api/post", (req, res) => {
 
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
+const postsRouter = require("./routes/posts");
 
-app.use("/posts", postRouter); // 공통된 부분 앞으로 빼냄
+app.use("/post", postRouter); // 공통된 부분 앞으로 빼냄
+app.use("/posts", postsRouter); // 공통된 부분 앞으로 빼냄
 app.use("/user", userRouter);
 
 // 에러처리 미들웨어 (내장형으로 명시할 필요 없음)

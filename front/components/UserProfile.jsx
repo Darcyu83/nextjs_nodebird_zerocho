@@ -23,15 +23,15 @@ function UserProfile() {
         <div key="twit">
           Twit
           <br />
-          {Posts.length}
+          {Posts?.length}
         </div>,
         <div key="Followed">
           Followed <br />
-          {Followings.length}
+          {Followings?.length}
         </div>,
         <div key="Followings">
           Followings <br />
-          {Followers.length}
+          {Followers?.length}
         </div>,
       ]}
     >

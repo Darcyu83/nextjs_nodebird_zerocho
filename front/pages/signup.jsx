@@ -59,7 +59,7 @@ function Signup() {
 
   const dispatch = useDispatch();
 
-  const { isLoggedIn, isProcessing, isErrorOccured, error } = useSelector(
+  const { me, isProcessing, isErrorOccured, error } = useSelector(
     (state) => state.user
   );
 
@@ -70,10 +70,10 @@ function Signup() {
   }, [email, password, nickname]);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (me) {
       Router.replace("/");
     }
-  }, [isLoggedIn]);
+  }, [me]);
 
   return (
     <AppLayout style={{}}>

@@ -84,7 +84,13 @@ function* loginFetch(action) {
   try {
     const result = yield call(loginAPI, action.data);
 
-    yield put({ type: LOGIN_SUCCESS, data: result.data.user });
+    console.log(
+      `%c[ sagas/user.js ]:: loginFetch : `,
+      "background-color: red; color: white;",
+      result
+    );
+
+    yield put({ type: LOGIN_SUCCESS, data: result.data?.user });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
     yield put({ type: LOGIN_FAILURE, error });
@@ -135,18 +141,19 @@ function* unfollowFetch(action) {
 
 function* loadMyInfoFetch(action) {
   try {
-    console.log(
-      `%c[ sagas/user.js ]::  : `,
-      "background-color: teal; color: white;"
-    );
     const result = yield call(loadMyInfoAPI);
-
-    yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data });
+    console.log(
+      `%c[ sagas/user.js ]:: loadMyInfoFetch : `,
+      "background-color: teal; color: white;",
+      result
+    );
+    yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data?.user });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
     yield put({ type: LOAD_MY_INFO_FAILURE, error: error });
   }
 }
+
 function* watchLogin() {
   //   while (true) {
   //     yield take(LOGIN_REQUEST, loginFetch);

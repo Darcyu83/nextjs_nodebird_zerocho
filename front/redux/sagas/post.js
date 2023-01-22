@@ -28,19 +28,22 @@ import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
 function addPostAPI(params) {
   return axios.post(
-    "/posts/post",
+    "/post",
     params
     //front : axios.default.withCredential true => 쿠키 전달
     //back : cors credentials true
   );
 }
 
+function deletePostAPI(params) {
+  return axios.delete("/", params);
+}
 function loadPostsAPI() {
   return axios.get("/posts");
 }
 
 function addCommentAPI(params) {
-  return axios.post(`/posts/post/${params.postId}/comment`, params, {
+  return axios.post(`/post/${params.postId}/comment`, params, {
     withCredentials: true,
   });
 }
@@ -68,7 +71,7 @@ function* addCommentFetch(action) {
 
 function* removePostFetch(action) {
   try {
-    yield delay(1000);
+    const result = yield call(deletePostAPI, action.data);
     yield put({ type: REMOVE_POST_SUCCESS, data: action.data });
     yield put({
       type: REMOVE_POST_OF_ME,

@@ -2,18 +2,17 @@ import produce from "immer";
 import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
-  me: {
-    id: null,
-    password: null,
-    nickname: null,
-
-    posts: [],
-    Followings: [],
-    Followers: [],
-  },
+  me: null,
+  // me: {
+  //   id: null,
+  //   password: null,
+  //   nickname: null,
+  //   Posts: [],
+  //   Followings: [],
+  //   Followers: [],
+  // },
 
   isSignedUp: false,
-  isLoggedIn: false,
   isLoggedOut: false,
   isErrorOccured: false,
   error: null,
@@ -228,8 +227,7 @@ const userReducer = (state = initialState, action) =>
       case SIGN_UP_SUCCESS:
         return {
           ...state,
-          me: { ...state.me, ...action.data },
-          isLoggedIn: true,
+          me: action.data,
           isProcessing: false,
           isSignedUp: true,
         };
@@ -253,8 +251,7 @@ const userReducer = (state = initialState, action) =>
       case LOGIN_SUCCESS:
         return {
           ...state,
-          me: { ...state.me, ...action.data },
-          isLoggedIn: true,
+          me: action.data,
           isProcessing: false,
           isSignedUp: true,
         };
@@ -262,7 +259,6 @@ const userReducer = (state = initialState, action) =>
       case LOGIN_FAILURE:
         return {
           ...state,
-          isLoggedIn: false,
           isProcessing: false,
           isErrorOccured: true,
           error: action.error,
@@ -279,8 +275,8 @@ const userReducer = (state = initialState, action) =>
       case LOGOUT_SUCCESS:
         return {
           ...state,
-          me: initialState.me,
-          isLoggedIn: false,
+          // me: initialState.me,
+          me: null,
           isProcessing: false,
         };
 
@@ -304,7 +300,6 @@ const userReducer = (state = initialState, action) =>
         return {
           ...state,
           me: { ...state.me, nickname: action.data.nickname },
-          isLoggedIn: false,
           isProcessing: false,
         };
 

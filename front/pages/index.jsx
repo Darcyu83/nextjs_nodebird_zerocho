@@ -7,8 +7,7 @@ import { LOAD_POSTS_REQUEST } from "../redux/reducers/post";
 import { loadMyInfoAction } from "../redux/reducers/user";
 
 const Home = () => {
-  const user = useSelector((state) => state.user);
-  const { mainPosts } = useSelector((state) => state.post);
+  const { me } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -21,10 +20,10 @@ const Home = () => {
   return (
     <AppLayout>
       {/* 포스트 등록 폼 */}
-      {user.isLoggedIn && <PostForm />}
+      {me && <PostForm />}
 
       {/* 포스트 목록 */}
-      <PostCardList mainPosts={mainPosts} />
+      <PostCardList />
     </AppLayout>
   );
 };

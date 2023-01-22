@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { LOAD_POSTS_REQUEST } from "../redux/reducers/post";
 import PostCard from "./PostCard";
 
-function PostCardList({ mainPosts }) {
+function PostCardList({}) {
   const { hasMorePosts, isProcessing } = useSelector((state) => state.post);
   const dispatch = useDispatch();
+
+  const { mainPosts } = useSelector((state) => state.post);
 
   useEffect(() => {
     dispatch({ type: LOAD_POSTS_REQUEST });
   }, []);
+
   useEffect(() => {
     function onScroll() {
       console.log(

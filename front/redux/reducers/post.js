@@ -205,7 +205,7 @@ const postReducer = (state = initialState, action) =>
       case ADD_COMMENT_SUCCESS:
         // 코멘트 추가할 원글 찾기
         const post = draft.mainPosts.find(
-          (post) => post.id === action.data.postId
+          (post) => post.id === action.data.PostId
         );
 
         // 맨앞으로 추가
