@@ -1,10 +1,10 @@
 import AppLayout from "../components/layout/AppLayout";
 import Head from "next/head";
-import UserNickEditForm from "../components/UserNickEditForm";
 import FollowCardList from "../components/FollowCardList";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import Router from "next/router";
+import UserNickEditForm from "../components/forms/UserNickEditForm";
 
 function profile() {
   const followList = [{ nickname: "제로초" }, { nickname: "하하" }];
@@ -17,7 +17,7 @@ function profile() {
     if (!(me && me.id)) {
       Router.push("/");
     }
-  }, [me, me.id]);
+  }, [me]);
 
   if (!me) return <></>;
 

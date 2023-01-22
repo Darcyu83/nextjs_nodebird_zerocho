@@ -15,14 +15,15 @@ import {
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
-  dummyPost,
-  generateDummyPostData,
   LOAD_POSTS_FAILURE,
   LOAD_POSTS_REQUEST,
   LOAD_POSTS_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
   REMOVE_POST_SUCCESS,
+  TOGGLE_LIKE_REQUEST,
+  TOGGLE_LIKE_FAILURE,
+  TOGGLE_LIKE_SUCCESS,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -36,8 +37,15 @@ function addPostAPI(params) {
 }
 
 function deletePostAPI(params) {
-  return axios.delete("/", params);
+  return axios.post(`/post/${params.id}`, params);
 }
+
+function toggleLikedAPI(params) {
+  return axios.patch(`/post/${params.id}/liked`, params);
+  // unliked만 따로 구현할경우
+  // return axios.delete(`/post/${params.id}/liked`);
+}
+
 function loadPostsAPI() {
   return axios.get("/posts");
 }
@@ -72,10 +80,11 @@ function* addCommentFetch(action) {
 function* removePostFetch(action) {
   try {
     const result = yield call(deletePostAPI, action.data);
-    yield put({ type: REMOVE_POST_SUCCESS, data: action.data });
+
+    yield put({ type: REMOVE_POST_SUCCESS, data: result.data });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: { postId: action.data.id },
+      data: result.data,
     });
   } catch (error) {
     yield put({ type: REMOVE_POST_FAILURE, error });
@@ -90,6 +99,18 @@ function* loadPostFetch(action) {
     yield put({ type: LOAD_POSTS_FAILURE, error });
   }
 }
+
+function* toggleLikedFetch(action) {
+  try {
+    const result = yield call(toggleLikedAPI, action.data);
+
+    console.log(" toggleLikedFetch === result ", result);
+    yield put({ type: TOGGLE_LIKE_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: TOGGLE_LIKE_FAILURE, error: error });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPostFetch);
 }
@@ -106,11 +127,15 @@ function* watchLoadPost() {
   yield throttle(2000, LOAD_POSTS_REQUEST, loadPostFetch);
 }
 
+function* watchToggleLiked() {
+  yield takeLatest(TOGGLE_LIKE_REQUEST, toggleLikedFetch);
+}
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),
     fork(watchLoadPost),
+    fork(watchToggleLiked),
   ]);
 }

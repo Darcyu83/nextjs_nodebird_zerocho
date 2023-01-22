@@ -1,50 +1,6 @@
 import { HYDRATE } from "next-redux-wrapper";
 import produce from "immer";
 
-const createId = () => {
-  return Math.floor(Math.random() * 100000);
-};
-
-export const generateDummyPostData = (qnty) => {
-  return Array(qnty)
-    .fill()
-    .map((y, i) => {
-      const id = createId();
-
-      return {
-        id: id,
-        user: {
-          id: id,
-          nickname: "id의 닉네임" + id,
-        },
-        content: "id::의 글 :" + id + `#${id}`,
-        images: [
-          { src: "https://via.placeholder.com/1920x1080" },
-          i % 4 === 0
-            ? {
-                src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
-              }
-            : i % 4 === 1
-            ? {
-                src: "https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg",
-              }
-            : i % 4 === 2
-            ? {
-                src: "https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg",
-              }
-            : { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
-        ],
-        Comments: [
-          {
-            user: { id: "21", nickname: "hoho" },
-            id: 1,
-            content: "Oh first Post",
-          },
-        ],
-      };
-    });
-};
-
 export const initialState = {
   mainPosts: [],
   hasMorePosts: true,
@@ -57,8 +13,6 @@ export const initialState = {
   isErrorOccured: false,
   error: null,
 };
-
-// initialState.mainPosts = generateDummyPostData(10);
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
@@ -80,32 +34,9 @@ export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
 
-export const dummyPost = (action) => ({
-  id: createId(),
-  user: { id: action.data.userId, nickname: action.data.userId },
-  content: action.data.content
-    ? action.data.content
-    : "first post #어흥 #하하 #한국",
-  images: [
-    {
-      src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
-    },
-    {
-      src: "https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg",
-    },
-    {
-      src: "https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg",
-    },
-    { src: "https://avatars.githubusercontent.com/u/62939972?v=4" },
-  ],
-  Comments: [
-    { user: { id: "21", nickname: "khoirahoho" }, content: "Oh first Post" },
-    {
-      user: { id: "31", nickname: "lhahahoira" },
-      content: "Oh first Post 2 2",
-    },
-  ],
-});
+export const TOGGLE_LIKE_REQUEST = "TOGGLE_LIKE_REQUEST";
+export const TOGGLE_LIKE_SUCCESS = "TOGGLE_LIKE_SUCCESS";
+export const TOGGLE_LIKE_FAILURE = "TOGGLE_LIKE_FAILURE";
 
 export const addPostRequestAction = (data) => {
   return {
@@ -142,6 +73,10 @@ export const addCommentFailureAction = (data) => {
     type: ADD_COMMENT_FAILURE,
     data,
   };
+};
+
+export const toggleLikeRequestAction = (data) => {
+  return { type: TOGGLE_LIKE_REQUEST, data };
 };
 
 const postReducer = (state = initialState, action) =>
@@ -256,22 +191,20 @@ const postReducer = (state = initialState, action) =>
         };
 
       case REMOVE_POST_SUCCESS:
-        draft.mainPosts = draft.mainPosts.filter(
-          (post) => post.id !== action.data.id
-        );
-        draft.isProcessing = false;
-        draft.isRemovePostDone = true;
-        break;
+        // draft.mainPosts.filter((post) => post.id !== action.data.PostId);
+        // draft.isProcessing = false;
+        // draft.isRemovePostDone = true;
+        // break;
 
-      // return {
-      //   ...state,
-      //   mainPosts: state.mainPosts.filter(
-      //     (post) => post.id !== action.data.id
-      //   ),
+        return {
+          ...state,
+          mainPosts: state.mainPosts.filter(
+            (post) => post.id !== action.data.PostId
+          ),
 
-      //   isProcessing: false,
-      //   isRemovePostDone: true,
-      // };
+          isProcessing: false,
+          isRemovePostDone: true,
+        };
 
       case REMOVE_POST_FAILURE:
         return {
@@ -305,6 +238,32 @@ const postReducer = (state = initialState, action) =>
       case LOAD_POSTS_FAILURE:
         draft.isProcessing = false;
         draft.isAddPostDone = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
+      case TOGGLE_LIKE_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case TOGGLE_LIKE_SUCCESS:
+        const likedPost = draft.mainPosts.find(
+          (post) => post.id === action.data.PostId
+        );
+
+        if (action.data.isLiked) {
+          likedPost.Likers.push(action.data.UserId);
+        } else {
+          likedPost.Likers = likedPost.Likers.filter((id) => {
+            return id !== action.data.UserId;
+          });
+        }
+
+        draft.isProcessing = false;
+        break;
+
+      case TOGGLE_LIKE_FAILURE:
+        draft.isProcessing = false;
         draft.isErrorOccured = true;
         draft.error = action.error;
         break;

@@ -14,18 +14,29 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Post.associate = (db) => {
+    //hasMany()  복수로 변수명이 정의됨
+    //
+    // post.addUser post.getUser
     db.Post.belongsTo(db.User);
+    //post.addComments post.getComments
     db.Post.hasMany(db.Comment);
+    // post.addImages post.getImages
     db.Post.hasMany(db.Image);
+    //post.addHashtags post.getHashtags
     db.Post.belongsToMany(db.Hashtag, { through: "PostHashTag" });
 
     // 사용자와 게시물의 좋아요 관계
+
+    // post.addLikers post.getLikers
+
+    // get(include:{model: Liked}) include를 많이씀
+    // add remove set(바꿈 업데이트)
     db.Post.belongsToMany(
       db.User,
 
       {
-        through: "Liked", // 테이블명 정의
-        as: "UserLiked",
+        through: "Like", // 테이블명 정의
+        as: "Likers",
       }
     );
 

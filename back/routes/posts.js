@@ -24,18 +24,30 @@ router.get("/", async (req, res, next) => {
       // offset 대신 lastId를 사용
 
       include: [
+        // {
+        //   model: User, //게시글 작성자
+        //   attributes: {
+        //     include: ["id", "email", "nickname"],
+        //     exclude: ["password"],
+        //   },
+        // },
         {
-          model: User,
-          attributes: {
-            include: ["id", "email", "nickname"],
-            exclude: ["password"],
-          },
+          model: User, // 게시글 작성자
+          attributes: ["id", "nickname"],
         },
+
+        { model: Image },
+
         {
           model: Comment,
-          include: [{ model: User, attributes: { exclude: ["password"] } }],
+          include: [{ model: User, attributes: ["id", "nickname"] }],
         },
-        { model: Image },
+
+        {
+          model: User, // 종아요 누른사람 아이디s
+          as: "Likers",
+          attributes: ["id"],
+        },
       ],
     });
 

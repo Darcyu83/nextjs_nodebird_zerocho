@@ -10,7 +10,10 @@ import ButtonGroup from "antd/lib/button/button-group";
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { REMOVE_POST_REQUEST } from "../redux/reducers/post";
+import {
+  REMOVE_POST_REQUEST,
+  toggleLikeRequestAction,
+} from "../redux/reducers/post";
 import FollowButton from "./FollowButton";
 import PostCommentForm from "./forms/PostCommentForm";
 import PostCardContent from "./PostCardContent";
@@ -19,9 +22,8 @@ import PostImage from "./PostImage";
 
 function PostCard({ post }) {
   const me = useSelector((state) => state.user.me);
-  const [liked, setLiked] = useState(false);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
-
+  const isLiked = post.Likers.find((id) => id === me?.id);
   const dispatch = useDispatch();
   const isProcessing = useSelector((state) => state.post.isProcessing);
 
@@ -29,9 +31,17 @@ function PostCard({ post }) {
     setIsCommentFormOpen((prev) => !prev);
   }, []);
 
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
-  }, []);
+  const onToggleLiked = useCallback(() => {
+    console.log(
+      `%c[ PostCard.jsx ]::  isLiked: `,
+      "background-color: orange; color: white;",
+      isLiked
+    );
+
+    if (!me) return alert("로그인이 필요합니다.");
+
+    dispatch(toggleLikeRequestAction({ id: post.id, isLiked: !isLiked }));
+  }, [me, isLiked]);
 
   const onClickDelete = useCallback(() => {
     dispatch({ type: REMOVE_POST_REQUEST, data: { id: post.id } });
@@ -46,14 +56,14 @@ function PostCard({ post }) {
         }
         actions={[
           <RetweetOutlined key={"retweet"} />,
-          liked ? (
+          isLiked ? (
             <HeartTwoTone
-              onClick={onToggleLike}
+              onClick={onToggleLiked}
               key={"liked"}
               twoToneColor={"#eb2f96"}
             />
           ) : (
-            <HeartOutlined onClick={onToggleLike} />
+            <HeartOutlined onClick={onToggleLiked} />
           ),
           <MessageOutlined key={"msg"} onClick={onToggleCommentForm} />,
           <Popover

@@ -19,27 +19,9 @@ export const initialState = {
   isProcessing: false,
 };
 
-const dummyUser = (action) => ({
-  id: action.data.email,
-  password: action.data.password,
-  nickname: "yuds",
-  age: 100,
-  posts: [{ id: "1" }],
-  Followings: [
-    { nickname: "person 1" },
-    { nickname: "person 2" },
-    { nickname: "person 3" },
-  ],
-  Followers: [
-    { nickname: "follower 1" },
-    { nickname: "follower 2" },
-    { nickname: "follower 3" },
-  ],
-});
-
-export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAMEREQUEST";
-export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAMESUCCESS";
-export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAMEFAILURE";
+export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAME_REQUEST";
+export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAME_SUCCESS";
+export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAME_FAILURE";
 
 export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
@@ -187,19 +169,19 @@ export const followFailureAction = (error) => {
 
 export const changeNicknameRequestAction = (data) => {
   return {
-    type: LOGOUT_REQUEST,
+    type: CHANGE_NICKNAME_REQUEST,
     data,
   };
 };
 export const changeNicknameSuccessAction = (data) => {
   return {
-    type: LOGOUT_SUCCESS,
+    type: CHANGE_NICKNAME_SUCCESS,
     data,
   };
 };
 export const changeNicknameFailureAction = (error) => {
   return {
-    type: LOGOUT_FAILURE,
+    type: CHANGE_NICKNAME_FAILURE,
     error,
   };
 };
@@ -314,7 +296,7 @@ const userReducer = (state = initialState, action) =>
       case ADD_POST_TO_ME:
         return {
           ...state,
-          me: { ...state.me, posts: [action.data.postId, ...state.me.posts] },
+          me: { ...state.me, Posts: [action.data.PostId, ...state.me.Posts] },
         };
 
       case REMOVE_POST_OF_ME:
@@ -322,8 +304,8 @@ const userReducer = (state = initialState, action) =>
           ...state,
           me: {
             ...state.me,
-            posts: state.me.posts.filter(
-              (post) => post.id !== action.data.postId
+            Posts: state.me.Posts.filter(
+              (post) => post.id !== action.data.PostId
             ),
           },
         };
