@@ -24,6 +24,9 @@ import {
   TOGGLE_LIKE_REQUEST,
   TOGGLE_LIKE_FAILURE,
   TOGGLE_LIKE_SUCCESS,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -37,7 +40,7 @@ function addPostAPI(params) {
 }
 
 function deletePostAPI(params) {
-  return axios.post(`/post/${params.id}`, params);
+  return axios.post(`/post/${params.id}/delete`, params);
 }
 
 function toggleLikedAPI(params) {
@@ -54,6 +57,10 @@ function addCommentAPI(params) {
   return axios.post(`/post/${params.postId}/comment`, params, {
     withCredentials: true,
   });
+}
+
+function uploadImagesAPI(params) {
+  return axios.post("/post/images", params);
 }
 
 function* addPostFetch(action) {
@@ -110,7 +117,14 @@ function* toggleLikedFetch(action) {
     yield put({ type: TOGGLE_LIKE_FAILURE, error: error });
   }
 }
-
+function* uploadImagesFetch(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data);
+    yield put({ type: UPLOAD_IMAGES_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: UPLOAD_IMAGES_FAILURE, data: error.response });
+  }
+}
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPostFetch);
 }
@@ -130,6 +144,10 @@ function* watchLoadPost() {
 function* watchToggleLiked() {
   yield takeLatest(TOGGLE_LIKE_REQUEST, toggleLikedFetch);
 }
+
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImagesFetch);
+}
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -137,5 +155,6 @@ export default function* postSaga() {
     fork(watchRemovePost),
     fork(watchLoadPost),
     fork(watchToggleLiked),
+    fork(watchUploadImages),
   ]);
 }

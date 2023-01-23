@@ -10,15 +10,15 @@ import {
 function FollowButton({ post }) {
   const { me, isProcessing } = useSelector((state) => state.user);
 
-  const isFollowing = me.Followings.some(
-    ({ nickname }) => nickname === post.user.nickname
+  const isFollowing = me?.Followings.some(
+    ({ nickname }) => nickname === post.User.nickname
   );
 
   const dispatch = useDispatch();
 
   const onFollow = useCallback(() => {
-    if (!isFollowing) dispatch(followRequestAction(post.user.nickname));
-    if (isFollowing) dispatch(unfollowRequestAction(post.user.nickname));
+    if (!isFollowing) dispatch(followRequestAction({ id: post.User.id }));
+    if (isFollowing) dispatch(unfollowRequestAction({ id: post.User.id }));
   }, [isFollowing]);
 
   return (

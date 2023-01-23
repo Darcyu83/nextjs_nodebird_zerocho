@@ -1,21 +1,32 @@
 import { Avatar, Button, Card } from "antd";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutRequestAction } from "../redux/reducers/user";
+import {
+  loadFollowersRequestAction,
+  loadFollowingsRequestAction,
+  logoutRequestAction,
+} from "../redux/reducers/user";
 
 const { Meta } = Card;
 
 function UserProfile() {
   const {
     isProcessing,
-    me: { Posts, nickname, Followings, Followers },
+    me: { id, Posts, nickname, Followings, Followers },
   } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const onLogOut = useCallback(() => {
     dispatch(logoutRequestAction());
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(loadFollowersRequestAction({ id }));
+      dispatch(loadFollowingsRequestAction({ id }));
+    }
+  }, [id]);
 
   return (
     <Card
@@ -26,11 +37,11 @@ function UserProfile() {
           {Posts?.length}
         </div>,
         <div key="Followed">
-          Followed <br />
+          팔로잉 <br />
           {Followings?.length}
         </div>,
         <div key="Followings">
-          Followings <br />
+          팔로워 <br />
           {Followers?.length}
         </div>,
       ]}

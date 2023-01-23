@@ -39,7 +39,7 @@ function ImageZoom({ images, onClose }) {
           >
             {images.map((img) => (
               <ImgWrapper key={img.src}>
-                <img src={img.src} alt={img.src} />
+                <img src={"http://localhost:5000/" + img.src} alt={img.src} />
               </ImgWrapper>
             ))}
           </Slider>

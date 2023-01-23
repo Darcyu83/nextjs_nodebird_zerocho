@@ -13,18 +13,26 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const app = express();
 const db = require("./models"); // db 연동
-
+const path = require("path");
 //app.use 는 미들웨어 설정들
 
 // passport 설정
 const configurePassport = require("./passport");
 configurePassport();
 
+// 업로드 폴더
+// "/" === localhost:port
+app.use("/", express.static(path.join(__dirname, "uploads")));
+
 // Json으로 전달받은 값을 req.body 에 넣어줌
+// axios의 파라미터 {}
 app.use(express.json());
 
 // form submit 데이터 타입 req.body 에 넣어줌
+// 일반 <form></form>으로 데이터 넘겨올때
 app.use(express.urlencoded({ extended: true }));
+
+// multipart/form-data 이미지 파일
 
 app.use(morgan("dev"));
 

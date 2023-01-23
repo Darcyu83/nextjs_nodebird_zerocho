@@ -1,18 +1,62 @@
 const express = require("express");
 const router = express.Router();
-const { Post, Comment, User, Image } = require("../models");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
+const { Post, Comment, User, Image } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
+// 업로드 폴더 있는지 검사
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("upoload folder does not exist--- ", error);
+  fs.mkdirSync("uploads");
+}
+
+// 이미지 업로드용 Multer
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, res, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname); // 확장자만 추출 .png
+      const basename = path.basename(file.originalname, ext);
+
+      done(null, basename + "_" + new Date().getTime() + ext);
+    },
+  }),
+  limits: { fileSize: 1024 * 1024 * 20 }, //20MB
+});
+
 // 등록
-router.post("/", isLoggedIn, async (req, res, next) => {
+router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   console.log(`[ post.js ]::  : `, req.body);
 
   try {
+    // 아래는 json 데이터 받은
     const post = await Post.create({
       UserId: req.user.id,
       content: req.body.content,
     });
+
+    if (req.body.images_multer) {
+      if (Array.isArray(req.body.images_multer)) {
+        // 이미지를 여러개 올리면 images_multer : [xx.png, xx.png]
+
+        const images = await Promise.all(
+          req.body.images_multer.map((img) => Image.create({ src: img }))
+        );
+
+        await post.addImages(images);
+      } else {
+        // 이미지를 한개 올리면 images_multer : xx.png
+        const image = await Image.create({ src: req.body.images_multer });
+        await post.addImages(image);
+      }
+    }
 
     // 리턴해야하는 데이터 형태
     // const beReturned = {
@@ -52,8 +96,6 @@ router.post("/", isLoggedIn, async (req, res, next) => {
       ],
     });
 
-    console.log(fullPost);
-
     res.status(201).json(fullPost);
   } catch (error) {
     console.log(error);
@@ -62,7 +104,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
 });
 
 // 삭제
-router.post("/:postId", isLoggedIn, async (req, res, next) => {
+router.post("/:postId/delete", isLoggedIn, async (req, res, next) => {
   console.log("\n\n\n req.body === ", req.body);
 
   try {
@@ -132,5 +174,19 @@ router.patch("/:postId/liked", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/images",
+  isLoggedIn,
+  // <input type="file" name = "images_multer" multiple
+  // 이미지 한장일 경우 upload.single
+  // 파일없이 텍스트만 올린다. upload.none();
+  upload.array("images_multer"),
+  async (req, res, next) => {
+    console.log("req.images_multer", req.files);
+
+    res.json(req.files.map((file) => file.filename));
+  }
+);
 
 module.exports = router;

@@ -6,6 +6,7 @@ import ImageZoom from "./imagesZoom";
 
 const ImgContainer = styled.div`
   position: relative;
+  width: 100%;
 `;
 function PostImage({ images }) {
   const [isImgZoomed, setIsImgZoomed] = useState(false);
@@ -23,9 +24,10 @@ function PostImage({ images }) {
     return (
       <ImgContainer>
         <img
+          style={{ width: "100%" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={images[0].src}
-          alt={images[0].src}
+          src={"http://localhost:5000/" + images[0].src}
+          alt={"http://localhost:5000/" + images[0].src}
           onClick={onZoom}
         />
 
@@ -40,15 +42,15 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={images[0].src}
-          alt={images[0].src}
+          src={"http://localhost:5000/" + images[0].src}
+          alt={"http://localhost:5000/" + images[0].src}
           onClick={onZoom}
         />
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={images[1].src}
-          alt={images[1].src}
+          src={"http://localhost:5000/" + images[1].src}
+          alt={"http://localhost:5000/" + images[1].src}
           onClick={onZoom}
         />
         {isImgZoomed && <ImageZoom images={images} onClose={onClose} />}
@@ -62,8 +64,8 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={images[0].src}
-          alt={images[0].src}
+          src={"http://localhost:5000/" + images[0].src}
+          alt={"http://localhost:5000/" + images[0].src}
           onClick={onZoom}
         />
 

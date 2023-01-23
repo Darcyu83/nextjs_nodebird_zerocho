@@ -52,7 +52,7 @@ function PostCard({ post }) {
       <Card
         style={{}}
         cover={
-          post.images && post.images[0] && <PostImage images={post.images} />
+          post.Images && post.Images[0] && <PostImage images={post.Images} />
         }
         actions={[
           <RetweetOutlined key={"retweet"} />,
@@ -90,7 +90,7 @@ function PostCard({ post }) {
             <EllipsisOutlined />
           </Popover>,
         ]}
-        extra={me && <FollowButton post={post} />}
+        extra={me && me.id !== post.User.id && <FollowButton post={post} />}
       >
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}

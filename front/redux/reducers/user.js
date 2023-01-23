@@ -43,6 +43,14 @@ export const UNFOLLOW_REQUEST = "UNFOLLOW_REQUEST";
 export const UNFOLLOW_SUCCESS = "UNFOLLOW_SUCCESS";
 export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 
+export const LOAD_FOLLOWERS_REQUEST = "LOAD_FOLLOWERS_REQUEST";
+export const LOAD_FOLLOWERS_SUCCESS = "LOAD_FOLLOWERS_SUCCESS";
+export const LOAD_FOLLOWERS_FAILURE = "LOAD_FOLLOWERS_FAILURE";
+
+export const LOAD_FOLLOWINGS_REQUEST = "LOAD_FOLLOWINGS_REQUEST";
+export const LOAD_FOLLOWINGS_SUCCESS = "LOAD_FOLLOWINGS_SUCCESS";
+export const LOAD_FOLLOWINGS_FAILURE = "LOAD_FOLLOWINGS_FAILURE";
+
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
@@ -190,6 +198,13 @@ export const loadMyInfoAction = () => {
   return { type: LOAD_MY_INFO_REQUEST };
 };
 
+export const loadFollowersRequestAction = (data) => {
+  return { type: LOAD_FOLLOWERS_REQUEST, data };
+};
+export const loadFollowingsRequestAction = (data) => {
+  return { type: LOAD_FOLLOWINGS_REQUEST, data };
+};
+
 // Immer 적용
 const userReducer = (state = initialState, action) =>
   produce(state, (draft) => {
@@ -265,9 +280,10 @@ const userReducer = (state = initialState, action) =>
       case LOGOUT_FAILURE:
         return {
           ...state,
+          me: null,
           isProcessing: false,
-          isErrorOccured: true,
-          error: action.error,
+          // isErrorOccured: true,
+          // error: action.error,
         };
 
       case CHANGE_NICKNAME_REQUEST:
@@ -333,11 +349,43 @@ const userReducer = (state = initialState, action) =>
       case UNFOLLOW_SUCCESS:
         draft.isProcessing = false;
         draft.me.Followings = draft.me.Followings.filter(
-          (obj) => obj.nickname !== action.data.nickname
+          (obj) => obj.id !== action.data.id
         );
         break;
 
       case UNFOLLOW_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+
+        break;
+
+      case LOAD_FOLLOWINGS_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case LOAD_FOLLOWINGS_SUCCESS:
+        draft.isProcessing = false;
+        draft.me.Followings = draft.me.Followings.push(action.data);
+        break;
+
+      case LOAD_FOLLOWINGS_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+
+        break;
+
+      case LOAD_FOLLOWERS_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case LOAD_FOLLOWERS_SUCCESS:
+        draft.isProcessing = false;
+        draft.me.Followings = draft.me.Followers.push(action.data);
+        break;
+
+      case LOAD_FOLLOWERS_FAILURE:
         draft.isProcessing = false;
         draft.isErrorOccured = true;
         draft.error = action.error;

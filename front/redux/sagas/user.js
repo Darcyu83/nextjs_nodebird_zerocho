@@ -19,6 +19,12 @@ import {
   FOLLOW_FAILURE,
   FOLLOW_REQUEST,
   FOLLOW_SUCCESS,
+  LOAD_FOLLOWERS_FAILURE,
+  LOAD_FOLLOWERS_REQUEST,
+  LOAD_FOLLOWERS_SUCCESS,
+  LOAD_FOLLOWINGS_FAILURE,
+  LOAD_FOLLOWINGS_REQUEST,
+  LOAD_FOLLOWINGS_SUCCESS,
   LOAD_MY_INFO_FAILURE,
   LOAD_MY_INFO_REQUEST,
   LOAD_MY_INFO_SUCCESS,
@@ -87,6 +93,21 @@ const changeNicknameAPI = (params) => {
   return axios.patch("/user/nickname", params);
 };
 
+const followAPI = (params) => {
+  return axios.patch(`/user/${params.id}/follow`, params);
+};
+
+const unfollowAPI = (params) => {
+  return axios.delete(`/user/${params.id}/follow`, params);
+};
+
+const loadFollowersAPI = (params) => {
+  return axios.get(`/user/${params.id}/followers`);
+};
+const loadFollowingsAPI = (params) => {
+  return axios.get(`/user/${params.id}/followings`);
+};
+
 function* loginFetch(action) {
   try {
     const result = yield call(loginAPI, action.data);
@@ -100,7 +121,7 @@ function* loginFetch(action) {
     yield put({ type: LOGIN_SUCCESS, data: result.data?.user });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOGIN_FAILURE, error });
+    yield put({ type: LOGIN_FAILURE, error: error.response.data });
   }
 }
 
@@ -110,7 +131,7 @@ function* logoutFetch(action) {
     yield put({ type: LOGOUT_SUCCESS });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOGOUT_FAILURE, error });
+    yield put({ type: LOGOUT_FAILURE, error: error.response.data });
   }
 }
 
@@ -121,28 +142,27 @@ function* signupFetch(action) {
     yield put({ type: SIGN_UP_SUCCESS, data: result.data.user });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: SIGN_UP_FAILURE, error });
+    yield put({ type: SIGN_UP_FAILURE, error: error.response.data });
   }
 }
 
 function* followFetch(action) {
   try {
-    yield delay(1000);
+    const result = yield call(followAPI, action.data);
 
-    yield put({ type: FOLLOW_SUCCESS, data: { nickname: action.data } });
+    yield put({ type: FOLLOW_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: FOLLOW_FAILURE, error });
+    yield put({ type: FOLLOW_FAILURE, error: error.response.data });
   }
 }
 function* unfollowFetch(action) {
   try {
-    yield delay(1000);
-
-    yield put({ type: UNFOLLOW_SUCCESS, data: { nickname: action.data } });
+    const result = yield call(unfollowAPI, action.data);
+    yield put({ type: UNFOLLOW_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: UNFOLLOW_FAILURE, error });
+    yield put({ type: UNFOLLOW_FAILURE, error: error.response.data });
   }
 }
 
@@ -157,7 +177,7 @@ function* loadMyInfoFetch(action) {
     yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data?.user });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOAD_MY_INFO_FAILURE, error: error });
+    yield put({ type: LOAD_MY_INFO_FAILURE, error: error.response.data });
   }
 }
 function* changeNicknameFetch(action) {
@@ -167,6 +187,25 @@ function* changeNicknameFetch(action) {
     yield put({ type: CHANGE_NICKNAME_SUCCESS, data: result.data });
   } catch (error) {
     yield put({ type: CHANGE_NICKNAME_FAILURE, error: error.response.data });
+  }
+}
+
+function* loadFollowersFetch(action) {
+  try {
+    const result = yield call(loadFollowersAPI, action.data);
+
+    yield put({ type: LOAD_FOLLOWERS_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_FOLLOWERS_FAILURE, error: error });
+  }
+}
+function* loadFollowingsFetch(action) {
+  try {
+    const result = yield call(loadFollowingsAPI, action.data);
+
+    yield put({ type: LOAD_FOLLOWINGS_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_FOLLOWINGS_FAILURE, error: error });
   }
 }
 
@@ -201,6 +240,14 @@ function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNicknameFetch);
 }
 
+function* watchLoadFollowers() {
+  yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowersFetch);
+}
+
+function* watchLoadFollowings() {
+  yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowingsFetch);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -210,5 +257,7 @@ export default function* userSaga() {
     fork(watchUnfollow),
     fork(watchLoadMyInfo),
     fork(watchChangeNickname),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
   ]);
 }

@@ -7,9 +7,6 @@ import Router from "next/router";
 import UserNickEditForm from "../components/forms/UserNickEditForm";
 
 function profile() {
-  const followList = [{ nickname: "제로초" }, { nickname: "하하" }];
-  const followerList = [{ nickname: "하하" }, { nickname: "제로초" }];
-
   const { me } = useSelector((state) => state.user);
 
   // const router = useRouter();

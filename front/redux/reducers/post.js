@@ -38,6 +38,16 @@ export const TOGGLE_LIKE_REQUEST = "TOGGLE_LIKE_REQUEST";
 export const TOGGLE_LIKE_SUCCESS = "TOGGLE_LIKE_SUCCESS";
 export const TOGGLE_LIKE_FAILURE = "TOGGLE_LIKE_FAILURE";
 
+export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
+export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
+export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";
+
+export const REMOVE_IMAGE_REQUEST = "REMOVE_IMAGE_REQUEST";
+// 서버에 올린 이미지는 삭제하지 않음. : 회사 정책에 따름
+// 이미지 보관 이유 : 머신러닝 등 데이터 활용의미
+// export const REMOVE_IMAGE_SUCCESS = "REMOVE_IMAGE_SUCCESS";
+// export const REMOVE_IMAGE_FAILURE = "REMOVE_IMAGE_FAILURE";
+
 export const addPostRequestAction = (data) => {
   return {
     type: ADD_POST_REQUEST,
@@ -79,6 +89,14 @@ export const toggleLikeRequestAction = (data) => {
   return { type: TOGGLE_LIKE_REQUEST, data };
 };
 
+export const uploadImagesRequestAction = (data) => {
+  return { type: UPLOAD_IMAGES_REQUEST, data };
+};
+
+export const removeImageRequestAction = (data) => {
+  return { type: REMOVE_IMAGE_REQUEST, data };
+};
+
 const postReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -103,6 +121,7 @@ const postReducer = (state = initialState, action) =>
         draft.mainPosts.unshift(action.data);
         draft.isAddPostDone = true;
         draft.isProcessing = false;
+        draft.imagePaths = [];
         break;
       // return {
       //   ...state,
@@ -268,6 +287,26 @@ const postReducer = (state = initialState, action) =>
         draft.error = action.error;
         break;
 
+      case UPLOAD_IMAGES_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case UPLOAD_IMAGES_SUCCESS:
+        draft.imagePaths = action.data;
+        draft.isProcessing = false;
+        break;
+
+      case UPLOAD_IMAGES_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
+      case REMOVE_IMAGE_REQUEST:
+        draft.imagePaths = draft.imagePaths.filter(
+          (img, idx) => idx !== action.data.idx
+        );
+        break;
       default:
         return state;
     }
