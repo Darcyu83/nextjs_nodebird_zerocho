@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { Op } = require("sequelize");
 const router = express();
 
 const { Post, User, Comment, Image } = require("../models");
@@ -7,9 +7,17 @@ const { Post, User, Comment, Image } = require("../models");
 // 조회
 router.get("/", async (req, res, next) => {
   try {
+    let where = {};
+
+    //lastId값이 있을경우 = 초기 로딩이 아닌경우
+    if (parseInt(req.query.lastId, 10)) {
+      where = { id: { [Op.lt]: parseInt(req.query.lastId, 10) } }; // lastId 보다 작은
+    }
+
     const posts = await Post.findAll({
-      limit: 10,
-      //   where: { id: req.params.lastId },
+      where,
+      limit: 5,
+      //   where: { id: { [Op.lt]: parseInt(req.query.lastId, 10) } },
       order: [
         ["createdAt", "DESC"], // 게시글 최신글 순
 
@@ -47,6 +55,14 @@ router.get("/", async (req, res, next) => {
           model: User, // 종아요 누른사람 아이디s
           as: "Likers",
           attributes: ["id"],
+        },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            { model: User, attributes: ["id", "nickname"] },
+            { model: Image },
+          ],
         },
       ],
     });

@@ -7,6 +7,7 @@ import {
   all,
   call,
   throttle,
+  take,
 } from "redux-saga/effects";
 import {
   ADD_COMMENT_FAILURE,
@@ -27,6 +28,9 @@ import {
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
   UPLOAD_IMAGES_FAILURE,
+  RETWEET_REQUEST,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -49,8 +53,8 @@ function toggleLikedAPI(params) {
   // return axios.delete(`/post/${params.id}/liked`);
 }
 
-function loadPostsAPI() {
-  return axios.get("/posts");
+function loadPostsAPI(params) {
+  return axios.get(`/posts?lastId=${params?.lastId || 0}`);
 }
 
 function addCommentAPI(params) {
@@ -61,6 +65,10 @@ function addCommentAPI(params) {
 
 function uploadImagesAPI(params) {
   return axios.post("/post/images", params);
+}
+
+function retweetAPI(params) {
+  return axios.post(`/post/${params.postId}/retweet`, params);
 }
 
 function* addPostFetch(action) {
@@ -100,7 +108,7 @@ function* removePostFetch(action) {
 
 function* loadPostFetch(action) {
   try {
-    const result = yield call(loadPostsAPI);
+    const result = yield call(loadPostsAPI, action.data);
     yield put({ type: LOAD_POSTS_SUCCESS, data: result.data });
   } catch (error) {
     yield put({ type: LOAD_POSTS_FAILURE, error });
@@ -125,6 +133,17 @@ function* uploadImagesFetch(action) {
     yield put({ type: UPLOAD_IMAGES_FAILURE, data: error.response });
   }
 }
+
+function* retweetFetch(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+
+    yield put({ type: RETWEET_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: RETWEET_FAILURE, error: error.response });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPostFetch);
 }
@@ -148,6 +167,10 @@ function* watchToggleLiked() {
 function* watchUploadImages() {
   yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImagesFetch);
 }
+
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweetFetch);
+}
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -156,5 +179,6 @@ export default function* postSaga() {
     fork(watchLoadPost),
     fork(watchToggleLiked),
     fork(watchUploadImages),
+    fork(watchRetweet),
   ]);
 }

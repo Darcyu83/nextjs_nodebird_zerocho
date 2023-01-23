@@ -4,7 +4,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
-const { Post, Comment, User, Image } = require("../models");
+const { Post, Comment, User, Image, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 // 업로드 폴더 있는지 검사
@@ -36,12 +36,27 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   console.log(`[ post.js ]::  : `, req.body);
 
   try {
-    // 아래는 json 데이터 받은
+    // 아래는 json 데이터 받은 컨텐츠 정보 등록 :본글
     const post = await Post.create({
       UserId: req.user.id,
       content: req.body.content,
     });
+    const hashtags = req.body.content.match(/#[^/\s$]+/g);
 
+    // 해쉬태그
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() },
+          })
+        )
+      );
+
+      await post.addHashtags(result.map((tagArr) => tagArr[0]));
+    }
+
+    // 이미지 path
     if (req.body.images_multer) {
       if (Array.isArray(req.body.images_multer)) {
         // 이미지를 여러개 올리면 images_multer : [xx.png, xx.png]
@@ -189,4 +204,80 @@ router.post(
   }
 );
 
+router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [{ model: Post, as: "Retweet" }],
+    });
+
+    if (!post) {
+      return res.status(403).send("존재하지 않는 게시글입니다.");
+    }
+
+    if (
+      // 내글 리트윗 방지
+      req.user.id === post.UserId ||
+      // 내글을 타인이 리트윗 한 후 다시 내가 리트윗 방지
+      (post.Retweet && post.Retweet.UserId === req.user.id)
+    ) {
+      return res.status(401).send("자신의 글은 리트윗할 수 없습니다. ");
+    }
+
+    // 리트윗 아이디가 존재하면 그 아이디 사용
+    // 없으면 첫번째 리트윗 이므로 해당 게시글 아이디 사용
+    const retweetTargetId = post.RetweetId || post.id;
+
+    // 내가 이미 리트윗 한 게시글인지 체크
+    const postRetweetedAlready = await Post.findOne({
+      where: { UserId: req.user.id, RetweetId: retweetTargetId },
+    });
+
+    if (postRetweetedAlready) {
+      return res.status(403).send("이미 리트윗한 포스트입니다.");
+    }
+
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: "retweet",
+    });
+
+    const retweetWithPrevPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            { model: User, attributes: ["id", "nickname"] },
+            { model: Image },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        { model: Image },
+        {
+          model: Comment,
+          include: {
+            model: User,
+            attributes: ["id", "nickname"],
+          },
+        },
+        {
+          //좋아요 누른사람
+          model: User,
+          as: "Likers",
+          attributes: {
+            include: ["id"],
+          },
+        },
+      ],
+    });
+
+    res.status(201).json(retweetWithPrevPost);
+  } catch (error) {}
+});
 module.exports = router;

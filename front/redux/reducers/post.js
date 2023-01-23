@@ -42,11 +42,15 @@ export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
 export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
 export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";
 
-export const REMOVE_IMAGE_REQUEST = "REMOVE_IMAGE_REQUEST";
 // 서버에 올린 이미지는 삭제하지 않음. : 회사 정책에 따름
 // 이미지 보관 이유 : 머신러닝 등 데이터 활용의미
+export const REMOVE_IMAGE_REQUEST = "REMOVE_IMAGE_REQUEST";
 // export const REMOVE_IMAGE_SUCCESS = "REMOVE_IMAGE_SUCCESS";
 // export const REMOVE_IMAGE_FAILURE = "REMOVE_IMAGE_FAILURE";
+
+export const RETWEET_REQUEST = "RETWEET_REQUEST";
+export const RETWEET_SUCCESS = "RETWEET_SUCCESS";
+export const RETWEET_FAILURE = "RETWEET_FAILURE";
 
 export const addPostRequestAction = (data) => {
   return {
@@ -97,6 +101,9 @@ export const removeImageRequestAction = (data) => {
   return { type: REMOVE_IMAGE_REQUEST, data };
 };
 
+export const retweetRequestAction = (data) => {
+  return { type: RETWEET_REQUEST, data };
+};
 const postReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -248,10 +255,10 @@ const postReducer = (state = initialState, action) =>
         break;
 
       case LOAD_POSTS_SUCCESS:
-        draft.mainPosts = action.data.concat(draft.mainPosts);
+        draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.isProcessing = false;
         draft.isAddPostDone = true;
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.hasMorePosts = action.data.length === 5;
         break;
 
       case LOAD_POSTS_FAILURE:
@@ -307,6 +314,22 @@ const postReducer = (state = initialState, action) =>
           (img, idx) => idx !== action.data.idx
         );
         break;
+
+      case RETWEET_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case RETWEET_SUCCESS:
+        draft.mainPosts.unshift(action.data);
+        draft.isProcessing = false;
+        break;
+
+      case RETWEET_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
       default:
         return state;
     }

@@ -10,9 +10,10 @@ import {
 function FollowButton({ post }) {
   const { me, isProcessing } = useSelector((state) => state.user);
 
-  const isFollowing = me?.Followings.some(
-    ({ nickname }) => nickname === post.User.nickname
-  );
+  const isFollowing =
+    me &&
+    me.Followings instanceof Array &&
+    me.Followings.some(({ nickname }) => nickname === post.User.nickname);
 
   const dispatch = useDispatch();
 

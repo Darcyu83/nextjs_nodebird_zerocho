@@ -14,7 +14,7 @@ const Home = () => {
   // 로그인 상태 복구
   useEffect(() => {
     dispatch(loadMyInfoAction());
-    dispatch({ type: LOAD_POSTS_REQUEST });
+    dispatch({ type: LOAD_POSTS_REQUEST, lastId: undefined });
   }, []);
 
   return (
