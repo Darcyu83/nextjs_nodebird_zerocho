@@ -3,6 +3,7 @@ import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
   me: null,
+  userInfo: null,
   // me: {
   //   id: null,
   //   password: null,
@@ -57,6 +58,10 @@ export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
 export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
 export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
+
+export const LOAD_USER_REQUEST = "LOAD_USER_REQUEST";
+export const LOAD_USER_SUCCESS = "LOAD_USER_SUCCESS";
+export const LOAD_USER_FAILURE = "LOAD_USER_FAILURE";
 
 export const changeNickname = (data) => {
   return {
@@ -209,8 +214,8 @@ export const loadFollowingsRequestAction = (data) => {
 const userReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case HYDRATE:
-        return { ...state, ...action.payload };
+      // case HYDRATE:
+      //   return { ...state, ...action.payload };
 
       case SIGN_UP_REQUEST:
         return {
@@ -404,6 +409,23 @@ const userReducer = (state = initialState, action) =>
         break;
 
       case LOAD_MY_INFO_FAILURE:
+        draft.isProcessing = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
+      case LOAD_USER_REQUEST:
+        draft.isProcessing = true;
+        break;
+
+      case LOAD_USER_SUCCESS:
+        draft.userInfo = action.data;
+        draft.isProcessing = false;
+        draft.isErrorOccured = false;
+        draft.error = null;
+        break;
+
+      case LOAD_USER_FAILURE:
         draft.isProcessing = false;
         draft.isErrorOccured = true;
         draft.error = action.error;

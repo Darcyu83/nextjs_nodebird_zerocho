@@ -5,6 +5,9 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import Router from "next/router";
 import UserNickEditForm from "../components/forms/UserNickEditForm";
+import wrapper from "../redux/store/configureStore";
+import { LOAD_USER_REQUEST } from "../redux/reducers/user";
+import { END } from "redux-saga";
 
 function profile() {
   const { me } = useSelector((state) => state.user);

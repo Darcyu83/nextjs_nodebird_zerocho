@@ -31,6 +31,9 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_FAILURE,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_REQUEST,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -55,6 +58,9 @@ function toggleLikedAPI(params) {
 
 function loadPostsAPI(params) {
   return axios.get(`/posts?lastId=${params?.lastId || 0}`);
+}
+function loadPostAPI(params) {
+  return axios.get(`/post?postId=${params.id}`);
 }
 
 function addCommentAPI(params) {
@@ -106,12 +112,22 @@ function* removePostFetch(action) {
   }
 }
 
-function* loadPostFetch(action) {
+function* loadPostsFetch(action) {
   try {
     const result = yield call(loadPostsAPI, action.data);
     yield put({ type: LOAD_POSTS_SUCCESS, data: result.data });
   } catch (error) {
     yield put({ type: LOAD_POSTS_FAILURE, error });
+  }
+}
+
+function* loadPostFetch(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+
+    yield put({ type: LOAD_POST_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_POST_FAILURE, error });
   }
 }
 
@@ -156,8 +172,12 @@ function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePostFetch);
 }
 
+function* watchLoadPosts() {
+  yield throttle(2000, LOAD_POSTS_REQUEST, loadPostsFetch);
+}
+
 function* watchLoadPost() {
-  yield throttle(2000, LOAD_POSTS_REQUEST, loadPostFetch);
+  yield throttle(2000, LOAD_POST_REQUEST, loadPostFetch);
 }
 
 function* watchToggleLiked() {
@@ -176,6 +196,7 @@ export default function* postSaga() {
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),
+    fork(watchLoadPosts),
     fork(watchLoadPost),
     fork(watchToggleLiked),
     fork(watchUploadImages),

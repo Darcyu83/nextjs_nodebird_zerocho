@@ -28,6 +28,9 @@ import {
   LOAD_MY_INFO_FAILURE,
   LOAD_MY_INFO_REQUEST,
   LOAD_MY_INFO_SUCCESS,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -108,6 +111,9 @@ const loadFollowingsAPI = (params) => {
   return axios.get(`/user/${params.id}/followings`);
 };
 
+const loadUserAPI = (params) => {
+  return axios.get(`/user/${params.id}/info`);
+};
 function* loginFetch(action) {
   try {
     const result = yield call(loginAPI, action.data);
@@ -118,7 +124,7 @@ function* loginFetch(action) {
       result
     );
 
-    yield put({ type: LOGIN_SUCCESS, data: result.data?.user });
+    yield put({ type: LOGIN_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
     yield put({ type: LOGIN_FAILURE, error: error.response.data });
@@ -139,7 +145,7 @@ function* signupFetch(action) {
   try {
     const result = yield call(signupAPI, action.data);
     console.log("sign up result === ", result);
-    yield put({ type: SIGN_UP_SUCCESS, data: result.data.user });
+    yield put({ type: SIGN_UP_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
     yield put({ type: SIGN_UP_FAILURE, error: error.response.data });
@@ -169,15 +175,14 @@ function* unfollowFetch(action) {
 function* loadMyInfoFetch(action) {
   try {
     const result = yield call(loadMyInfoAPI);
-    console.log(
-      `%c[ sagas/user.js ]:: loadMyInfoFetch : `,
-      "background-color: teal; color: white;",
-      result
-    );
-    yield put({ type: LOAD_MY_INFO_SUCCESS, data: result.data?.user });
+
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOAD_MY_INFO_FAILURE, error: error.response.data });
+    yield put({ type: LOAD_MY_INFO_FAILURE, error: error });
   }
 }
 function* changeNicknameFetch(action) {
@@ -206,6 +211,15 @@ function* loadFollowingsFetch(action) {
     yield put({ type: LOAD_FOLLOWINGS_SUCCESS, data: result.data });
   } catch (error) {
     yield put({ type: LOAD_FOLLOWINGS_FAILURE, error: error });
+  }
+}
+
+function* loadUserFetch(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({ type: LOAD_USER_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_USER_FAILURE, data: error });
   }
 }
 
@@ -248,6 +262,10 @@ function* watchLoadFollowings() {
   yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowingsFetch);
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUserFetch);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -259,5 +277,6 @@ export default function* userSaga() {
     fork(watchChangeNickname),
     fork(watchLoadFollowers),
     fork(watchLoadFollowings),
+    fork(watchLoadUser),
   ]);
 }

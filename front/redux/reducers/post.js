@@ -3,6 +3,7 @@ import produce from "immer";
 
 export const initialState = {
   mainPosts: [],
+  singlePost: null,
   hasMorePosts: true,
   imagePaths: [],
   isProcessing: false,
@@ -33,6 +34,10 @@ export const REMOVE_COMMENT_FAILURE = "REMOVE_COMMENT_FAILURE";
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
+
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
 
 export const TOGGLE_LIKE_REQUEST = "TOGGLE_LIKE_REQUEST";
 export const TOGGLE_LIKE_SUCCESS = "TOGGLE_LIKE_SUCCESS";
@@ -107,8 +112,8 @@ export const retweetRequestAction = (data) => {
 const postReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case HYDRATE:
-        return { ...state, ...action.payload };
+      // case HYDRATE:
+      //   return { ...state, ...action.payload };
 
       case ADD_POST_REQUEST:
         draft.isProcessing = true;
@@ -262,6 +267,24 @@ const postReducer = (state = initialState, action) =>
         break;
 
       case LOAD_POSTS_FAILURE:
+        draft.isProcessing = false;
+        draft.isAddPostDone = false;
+        draft.isErrorOccured = true;
+        draft.error = action.error;
+        break;
+
+      case LOAD_POST_REQUEST:
+        draft.isProcessing = true;
+        draft.isAddPostDone = false;
+        break;
+
+      case LOAD_POST_SUCCESS:
+        draft.singlePost = action.data;
+        draft.isProcessing = false;
+        draft.isAddPostDone = true;
+        break;
+
+      case LOAD_POST_FAILURE:
         draft.isProcessing = false;
         draft.isAddPostDone = false;
         draft.isErrorOccured = true;

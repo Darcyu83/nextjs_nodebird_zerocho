@@ -6,8 +6,11 @@ import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { signupRequestAction } from "../redux/reducers/user";
+import { loadMyInfoAction, signupRequestAction } from "../redux/reducers/user";
 import Router from "next/router";
+import wrapper from "../redux/store/configureStore";
+import axios from "axios";
+import { END } from "redux-saga";
 
 const ErrorMessage = styled.p`
   color: red;
@@ -150,4 +153,22 @@ function Signup() {
 }
 
 Signup.propTypes = {};
+export const getServerSideProps = wrapper.getServerSideProps(async (_ctx) => {
+  console.log("\n\n\n  _ctx.req.headers  \n\n\n", _ctx.req.headers);
+
+  // 프론트 서버 에서 백엔드 서버로 요청할때 쿠키
+  // 브라우저가 개입할수 없기 때문에 쿠키정보가 없다.
+  // 아래와 같이 처리한다.
+  const cookie = _ctx.req ? _ctx.req.headers.cookie : null;
+  axios.defaults.headers.Cookie = ""; // 쿠키 초기화 : 전사람 로그인 쿠키 초기화
+
+  if (_ctx.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  axios.defaults.headers.Cookie = cookie;
+  _ctx.store.dispatch(loadMyInfoAction());
+  _ctx.store.dispatch(END);
+  await _ctx.store.sagaTask.toPromise();
+});
 export default Signup;

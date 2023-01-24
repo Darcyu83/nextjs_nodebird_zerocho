@@ -31,6 +31,48 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 20 }, //20MB
 });
 
+// 게시물 1개 조회
+router.get("/", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({ where: { id: req.query.postId } });
+    if (!post) return res.status(404).send("게시물이 존재하지 않습니다.");
+
+    const fullPost = await Post.findOne({
+      where: { id: req.query.postId },
+      include: [
+        {
+          model: User, // 게시글 작성자
+          attributes: ["id", "nickname"],
+        },
+
+        { model: Image },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User, //댓글 작성자
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+
+        {
+          //좋아요 누른사람
+          model: User,
+          as: "Likers",
+          attributes: {
+            include: ["id"],
+          },
+        },
+      ],
+    });
+
+    res.status(200).json(fullPost);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 // 등록
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   console.log(`[ post.js ]::  : `, req.body);

@@ -11,6 +11,7 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 router.get("/", async (req, res, next) => {
   console.log("\n\n\n\n\nreq.user", req.user);
+  console.log("\n\n\n\n\nreq.headers", req.headers);
   try {
     if (!req.user) return res.status(200).json(null);
 
@@ -29,9 +30,42 @@ router.get("/", async (req, res, next) => {
       ],
     });
 
-    console.log("resultresultresultresult", fullUserWithoutPwd);
+    res.status(200).json(fullUserWithoutPwd);
+  } catch (error) {
+    console.log(`${req.url} :: error : `, error);
+    next(error);
+  }
+});
 
-    res.status(200).json({ user: fullUserWithoutPwd });
+router.get("/:userId/info", async (req, res, next) => {
+  console.log("\n\n\n\n\nreq.user", req.user);
+  console.log("\n\n\n\n\nreq.headers", req.headers);
+  try {
+    // if (!req.user) return res.status(200).json(null);
+
+    const fullUserWithoutPwd = await User.findOne({
+      where: { id: req.params.userId },
+
+      attributes: {
+        include: ["id", "email", "nickname"],
+        exclude: ["password"],
+      },
+
+      include: [
+        { model: Post, attributes: ["id"] },
+        { model: User, as: "Followings", attributes: ["id"] },
+        { model: User, as: "Followers", attributes: ["id"] },
+      ],
+    });
+    if (!fullUserWithoutPwd)
+      res.status(404).send("존재하지 않는 사용자입니다.");
+
+    const data = fullUserWithoutPwd.toJSON();
+
+    data.Posts = data.Posts.length;
+    data.Followers = data.Followers.length;
+    data.Followings = data.Followings.length;
+    res.status(200).json(data);
   } catch (error) {
     console.log(`${req.url} :: error : `, error);
     next(error);
@@ -104,7 +138,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
         ],
       });
 
-      return res.status(200).json({ user: fullUserWithoutPwd });
+      return res.status(200).json(fullUserWithoutPwd);
     });
   })(req, res, next);
 });
@@ -156,10 +190,7 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
       ],
     });
 
-    res.status(201).json({
-      user,
-      result: "Created a User" + req.body.email,
-    });
+    res.status(201).json(user);
   } catch (error) {
     console.log("Create a User error:: ", error);
     next(error); // 한방에 에러 처리 핸들러 status 500

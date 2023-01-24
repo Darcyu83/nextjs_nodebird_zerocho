@@ -12,9 +12,10 @@ const customLoggerMiddleware =
     console.log(
       "%c customLoggerMiddleware action:: ",
       "background-color: teal; color: white;",
-      action.type,
-      action
+      action.type
     );
+
+    console.table(action);
     return next(action);
   };
 

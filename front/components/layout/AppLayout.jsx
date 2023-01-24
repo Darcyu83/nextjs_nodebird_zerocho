@@ -47,7 +47,8 @@ function AppLayout({ children }) {
               </Link>
             ),
           },
-          {
+
+          me && {
             label: (
               <Link href="/profile">
                 <p>프로필</p>
