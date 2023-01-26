@@ -136,6 +136,9 @@ app.use((err, req, res, next) => {});
 // });
 
 app.listen(5000, () => {
-  console.log("서버 실행 중 port::5000\n\n");
+  console.log(
+    "서버 실행 중 port::5000\n\n",
+    `process.env.NODE_ENV = ${process.env.NODE_ENV}`
+  );
 });
 // 3 ======================================================
