@@ -20,6 +20,9 @@ const path = require("path");
 const configurePassport = require("./passport");
 configurePassport();
 
+app.set("port", process.env.NODE_ENV === "production" ? 80 : 5000);
+
+const PORT = app.get("port");
 // 업로드 폴더
 // "/" === localhost:port
 app.use("/", express.static(path.join(__dirname, "uploads")));
@@ -135,9 +138,9 @@ app.use((err, req, res, next) => {});
 //   console.log("서버 실행 중 port::4000");
 // });
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
   console.log(
-    "서버 실행 중 port::5000\n\n",
+    `서버 실행 중 port::${PORT}\n\n`,
     `process.env.NODE_ENV = ${process.env.NODE_ENV}`
   );
 });
