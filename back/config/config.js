@@ -19,9 +19,10 @@ module.exports = {
   },
   production: {
     username: "root",
-    password: null,
+    password: process.env.DB_PASSWORD,
     database: "react_nodebird",
     host: "127.0.0.1",
+    port: "4000",
     dialect: "mysql",
   },
 };
