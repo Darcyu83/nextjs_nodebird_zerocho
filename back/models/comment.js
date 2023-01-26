@@ -16,3 +16,30 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Comment;
 };
+
+// class 문법
+
+const DataTypes = require("sequelize");
+
+module.exports = class Comment extends DataTypes.Model {
+  static init(sequelize) {
+    //  sequelize.define() 대체
+
+    return super.init(
+      { content: { type: DataTypes.TEXT, allowNull: false } },
+
+      {
+        modelName: "Comment",
+        tableName: "comments",
+        charset: "utf8mb4",
+        collate: "utf8mb4_general_ci",
+        sequelize,
+      }
+    );
+  }
+
+  static associate(db) {
+    db.Comment.belongsTo(db.User);
+    db.Comment.belongsTo(db.Post);
+  }
+};
