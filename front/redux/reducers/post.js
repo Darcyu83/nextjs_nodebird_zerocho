@@ -3,6 +3,7 @@ import produce from "immer";
 
 export const initialState = {
   mainPosts: [],
+
   singlePost: null,
   hasMorePosts: true,
   imagePaths: [],
@@ -38,6 +39,14 @@ export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
 export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
 export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
 export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
+
+export const LOAD_USER_POSTS_REQUEST = "LOAD_USER_POSTS_REQUEST";
+export const LOAD_USER_POSTS_SUCCESS = "LOAD_USER_POSTS_SUCCESS";
+export const LOAD_USER_POSTS_FAILURE = "LOAD_USER_POSTS_FAILURE";
+
+export const LOAD_HASHTAG_POSTS_REQUEST = "LOAD_HASHTAG_POSTS_REQUEST";
+export const LOAD_HASHTAG_POSTS_SUCCESS = "LOAD_HASHTAG_POSTS_SUCCESS";
+export const LOAD_HASHTAG_POSTS_FAILURE = "LOAD_HASHTAG_POSTS_FAILURE";
 
 export const TOGGLE_LIKE_REQUEST = "TOGGLE_LIKE_REQUEST";
 export const TOGGLE_LIKE_SUCCESS = "TOGGLE_LIKE_SUCCESS";
@@ -112,8 +121,8 @@ export const retweetRequestAction = (data) => {
 const postReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      // case HYDRATE:
-      //   return { ...state, ...action.payload };
+      case HYDRATE:
+        return { ...state, ...action.payload };
 
       case ADD_POST_REQUEST:
         draft.isProcessing = true;
@@ -255,11 +264,15 @@ const postReducer = (state = initialState, action) =>
         };
 
       case LOAD_POSTS_REQUEST:
+      case LOAD_USER_POSTS_REQUEST:
+      case LOAD_HASHTAG_POSTS_REQUEST:
         draft.isProcessing = true;
         draft.isAddPostDone = false;
         break;
 
       case LOAD_POSTS_SUCCESS:
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_POSTS_SUCCESS:
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.isProcessing = false;
         draft.isAddPostDone = true;
@@ -267,6 +280,8 @@ const postReducer = (state = initialState, action) =>
         break;
 
       case LOAD_POSTS_FAILURE:
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_POSTS_FAILURE:
         draft.isProcessing = false;
         draft.isAddPostDone = false;
         draft.isErrorOccured = true;

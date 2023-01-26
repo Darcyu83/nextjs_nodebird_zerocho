@@ -34,7 +34,11 @@ import postSaga from "./post";
 import { backUrl } from "../../config/config";
 import axios from "axios";
 
-axios.defaults.baseURL = backUrl;
+// axios.defaults.baseURL = backUrl;
+axios.defaults.baseURL =
+  process.env.NODE_ENV === "production"
+    ? "http://api.nodebird.com"
+    : "http://localhost:5000";
 // cors : 이슈 해결
 // 다른 도메인에서 호출시 쿠키 전달안되서 로그인해도 오류가 발생
 // localhost:3000 request

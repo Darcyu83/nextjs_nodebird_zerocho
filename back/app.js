@@ -119,10 +119,12 @@ app.delete("/api/post", (req, res) => {
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
 const postsRouter = require("./routes/posts");
+const hashtagRouter = require("./routes/hashtag");
 
 app.use("/post", postRouter); // 공통된 부분 앞으로 빼냄
 app.use("/posts", postsRouter); // 공통된 부분 앞으로 빼냄
 app.use("/user", userRouter);
+app.use("/hashtag", hashtagRouter);
 
 // 에러처리 미들웨어 (내장형으로 명시할 필요 없음)
 // => 특별하게처리 할때 구현
@@ -134,6 +136,6 @@ app.use((err, req, res, next) => {});
 // });
 
 app.listen(5000, () => {
-  console.log("서버 실행 중 port::4000");
+  console.log("서버 실행 중 port::5000\n\n");
 });
 // 3 ======================================================

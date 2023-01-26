@@ -127,7 +127,7 @@ function* loginFetch(action) {
     yield put({ type: LOGIN_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOGIN_FAILURE, error: error.response.data });
+    yield put({ type: LOGIN_FAILURE, error: error });
   }
 }
 
@@ -137,7 +137,7 @@ function* logoutFetch(action) {
     yield put({ type: LOGOUT_SUCCESS });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: LOGOUT_FAILURE, error: error.response.data });
+    yield put({ type: LOGOUT_FAILURE, error: error });
   }
 }
 
@@ -148,7 +148,7 @@ function* signupFetch(action) {
     yield put({ type: SIGN_UP_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: SIGN_UP_FAILURE, error: error.response.data });
+    yield put({ type: SIGN_UP_FAILURE, error: error });
   }
 }
 
@@ -159,7 +159,7 @@ function* followFetch(action) {
     yield put({ type: FOLLOW_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: FOLLOW_FAILURE, error: error.response.data });
+    yield put({ type: FOLLOW_FAILURE, error: error });
   }
 }
 function* unfollowFetch(action) {
@@ -168,7 +168,7 @@ function* unfollowFetch(action) {
     yield put({ type: UNFOLLOW_SUCCESS, data: result.data });
   } catch (error) {
     console.log("sagas/user.js error=== ", error);
-    yield put({ type: UNFOLLOW_FAILURE, error: error.response.data });
+    yield put({ type: UNFOLLOW_FAILURE, error: error });
   }
 }
 
@@ -191,7 +191,7 @@ function* changeNicknameFetch(action) {
 
     yield put({ type: CHANGE_NICKNAME_SUCCESS, data: result.data });
   } catch (error) {
-    yield put({ type: CHANGE_NICKNAME_FAILURE, error: error.response.data });
+    yield put({ type: CHANGE_NICKNAME_FAILURE, error: error });
   }
 }
 
@@ -219,7 +219,7 @@ function* loadUserFetch(action) {
     const result = yield call(loadUserAPI, action.data);
     yield put({ type: LOAD_USER_SUCCESS, data: result.data });
   } catch (error) {
-    yield put({ type: LOAD_USER_FAILURE, data: error });
+    yield put({ type: LOAD_USER_FAILURE, error: error });
   }
 }
 

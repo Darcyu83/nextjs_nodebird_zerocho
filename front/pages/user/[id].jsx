@@ -1,16 +1,20 @@
 import { List } from "antd";
-import PropTypes from "prop-types";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { LOAD_POSTS_REQUEST } from "../redux/reducers/post";
-import PostCard from "./PostCard";
+import { END } from "redux-saga";
+import PostCard from "../../components/PostCard";
+import { LOAD_USER_POSTS_REQUEST } from "../../redux/reducers/post";
+import wrapper from "../../redux/store/configureStore";
 
-function PostCardList({}) {
-  const { mainPosts, hasMorePosts, isProcessing, error } = useSelector(
-    (state) => state.post
-  );
+function UserPosts({}) {
   const dispatch = useDispatch();
 
+  const { mainPosts, hasMorePosts, isProcessing } = useSelector(
+    (state) => state.post
+  );
+
+  const router = useRouter();
   // useEffect(() => {
   //   if (error) return alert(error.data);
   // }, [error]);
@@ -40,11 +44,12 @@ function PostCardList({}) {
           document.documentElement.clientHeight * 0.6
       ) {
         if (hasMorePosts && !isProcessing) {
-          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          const lastId = mainPosts[mainPostslength - 1]?.id;
 
           dispatch({
-            type: LOAD_POSTS_REQUEST,
-            data: { lastId },
+            type: LOAD_USER_POSTS_REQUEST,
+
+            data: { lastId, id: router.query.id },
           });
         }
       }
@@ -58,17 +63,27 @@ function PostCardList({}) {
   return (
     <List>
       {mainPosts.length !== 0 &&
-        mainPosts.map((post, idx) => (
-          <List.Item key={"post_" + post.id + idx} style={{ marginTop: 20 }}>
-            <PostCard post={post} />
-          </List.Item>
-        ))}
+        mainPosts.map((post, idx) => {
+          console.log("mainposts === , post === ", mainPosts, post);
+
+          return (
+            <List.Item key={"post_" + post.id + idx} style={{ marginTop: 20 }}>
+              <PostCard post={post} />
+            </List.Item>
+          );
+        })}
     </List>
   );
 }
 
-PostCardList.propTypes = {
-  mainPosts: PropTypes.arrayOf(PropTypes.object),
-};
+export const getServerSideProps = wrapper.getServerSideProps(async (_ctx) => {
+  _ctx.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
 
-export default PostCardList;
+    data: { lastId: 0, id: _ctx.params.id },
+  });
+
+  _ctx.store.dispatch(END);
+  await _ctx.store.sagaTask.toPromise();
+});
+export default UserPosts;

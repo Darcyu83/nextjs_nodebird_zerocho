@@ -21,10 +21,13 @@ import PostCardContent from "./PostCardContent";
 import PostCommentCardList from "./PostCommentCardList";
 import PostImage from "./PostImage";
 
+import moment from "moment";
+
+moment.locale("ko");
 function PostCard({ post }) {
   const me = useSelector((state) => state.user.me);
   const [isCommentFormOpen, setIsCommentFormOpen] = useState(false);
-  const isLiked = post.Likers.find((id) => id === me?.id);
+  const isLiked = post.Likers?.find((id) => id === me?.id);
   const dispatch = useDispatch();
   const isProcessing = useSelector((state) => state.post.isProcessing);
 
@@ -109,6 +112,9 @@ function PostCard({ post }) {
             }
             extra={me && me.id !== post.User.id && <FollowButton post={post} />}
           >
+            <div style={{ float: "right" }}>
+              {moment(post.Retweet.createdAt).fromNow()}
+            </div>
             <Card.Meta
               avatar={
                 <Avatar>{post.Retweet.User.nickname[0].toUpperCase()}</Avatar>
@@ -118,11 +124,16 @@ function PostCard({ post }) {
             />
           </Card>
         ) : (
-          <Card.Meta
-            avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}
-            title={post.User.nickname}
-            description={<PostCardContent content={post.content} />}
-          />
+          <>
+            <div style={{ float: "right" }}>
+              {moment(post.createdAt).format("YYYY.MM.DD")}
+            </div>
+            <Card.Meta
+              avatar={<Avatar>{post.User.nickname[0].toUpperCase()}</Avatar>}
+              title={post.User.nickname}
+              description={<PostCardContent content={post.content} />}
+            />
+          </>
         )}
       </Card>
       {isCommentFormOpen && <PostCommentForm post={post} />}

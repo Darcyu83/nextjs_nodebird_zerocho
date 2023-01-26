@@ -214,8 +214,8 @@ export const loadFollowingsRequestAction = (data) => {
 const userReducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      // case HYDRATE:
-      //   return { ...state, ...action.payload };
+      case HYDRATE:
+        return { ...state, ...action.payload };
 
       case SIGN_UP_REQUEST:
         return {

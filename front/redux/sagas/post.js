@@ -34,6 +34,12 @@ import {
   LOAD_POST_FAILURE,
   LOAD_POST_SUCCESS,
   LOAD_POST_REQUEST,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -59,6 +65,20 @@ function toggleLikedAPI(params) {
 function loadPostsAPI(params) {
   return axios.get(`/posts?lastId=${params?.lastId || 0}`);
 }
+
+function loadUserPostsAPI(params) {
+  return axios.get(
+    `/posts/user?userId=${params.id}&lastId=${params?.lastId || 0}`
+  );
+}
+function loadHashtagPostsAPI(params) {
+  return axios.get(
+    `/hashtag/${encodeURIComponent(params.hashtag)}?lastId=${
+      params?.lastId || 0
+    }`
+  );
+}
+
 function loadPostAPI(params) {
   return axios.get(`/post?postId=${params.id}`);
 }
@@ -138,7 +158,7 @@ function* toggleLikedFetch(action) {
     console.log(" toggleLikedFetch === result ", result);
     yield put({ type: TOGGLE_LIKE_SUCCESS, data: result.data });
   } catch (error) {
-    yield put({ type: TOGGLE_LIKE_FAILURE, error: error });
+    yield put({ type: TOGGLE_LIKE_FAILURE, error });
   }
 }
 function* uploadImagesFetch(action) {
@@ -146,7 +166,7 @@ function* uploadImagesFetch(action) {
     const result = yield call(uploadImagesAPI, action.data);
     yield put({ type: UPLOAD_IMAGES_SUCCESS, data: result.data });
   } catch (error) {
-    yield put({ type: UPLOAD_IMAGES_FAILURE, data: error.response });
+    yield put({ type: UPLOAD_IMAGES_FAILURE, error });
   }
 }
 
@@ -156,10 +176,29 @@ function* retweetFetch(action) {
 
     yield put({ type: RETWEET_SUCCESS, data: result.data });
   } catch (error) {
-    yield put({ type: RETWEET_FAILURE, error: error.response });
+    yield put({ type: RETWEET_FAILURE, error });
   }
 }
 
+function* loadUserPostsFetch(action) {
+  try {
+    const result = yield call(loadUserPostsAPI, action.data);
+
+    yield put({ type: LOAD_USER_POSTS_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_USER_POSTS_FAILURE, error });
+  }
+}
+
+function* loadHashtagPostsFetch(action) {
+  try {
+    const result = yield call(loadHashtagPostsAPI, action.data);
+
+    yield put({ type: LOAD_HASHTAG_POSTS_SUCCESS, data: result.data });
+  } catch (error) {
+    yield put({ type: LOAD_HASHTAG_POSTS_FAILURE, error });
+  }
+}
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPostFetch);
 }
@@ -176,8 +215,15 @@ function* watchLoadPosts() {
   yield throttle(2000, LOAD_POSTS_REQUEST, loadPostsFetch);
 }
 
+function* watchLoadUserPosts() {
+  yield throttle(2000, LOAD_USER_POSTS_REQUEST, loadUserPostsFetch);
+}
+function* watchLoadHashtagPosts() {
+  yield throttle(2000, LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPostsFetch);
+}
+
 function* watchLoadPost() {
-  yield throttle(2000, LOAD_POST_REQUEST, loadPostFetch);
+  yield takeLatest(LOAD_POST_REQUEST, loadPostFetch);
 }
 
 function* watchToggleLiked() {
@@ -191,12 +237,15 @@ function* watchUploadImages() {
 function* watchRetweet() {
   yield takeLatest(RETWEET_REQUEST, retweetFetch);
 }
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),
     fork(watchLoadPosts),
+    fork(watchLoadUserPosts),
+    fork(watchLoadHashtagPosts),
     fork(watchLoadPost),
     fork(watchToggleLiked),
     fork(watchUploadImages),
