@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app",
-    "start" : "node app"
+    "prod": "NODE_ENV=production node app",
+    "start": "node app"
   },
   "author": "darcy.u83",
   "license": "ISC",
