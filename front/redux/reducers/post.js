@@ -1,5 +1,5 @@
 import { HYDRATE } from "next-redux-wrapper";
-import produce from "immer";
+import produce from "../../utils/enableES5Produce";
 
 export const initialState = {
   mainPosts: [],

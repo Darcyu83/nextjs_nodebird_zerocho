@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce from "../../utils/enableES5Produce";
 import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
