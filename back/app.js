@@ -20,7 +20,7 @@ const path = require("path");
 const configurePassport = require("./passport");
 configurePassport();
 
-app.set("port", process.env.NODE_ENV === "production" ? 8080 : 5000);
+app.set("port", process.env.NODE_ENV === "production" ? 80 : 5000);
 
 const PORT = app.get("port");
 // 업로드 폴더
