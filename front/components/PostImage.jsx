@@ -2,6 +2,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
+import { backUrl } from "../config/config";
 import ImageZoom from "./imagesZoom";
 
 const ImgContainer = styled.div`
@@ -26,8 +27,8 @@ function PostImage({ images }) {
         <img
           style={{ width: "100%" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={"http://localhost:5000/" + images[0].src}
-          alt={"http://localhost:5000/" + images[0].src}
+          src={backUrl + images[0].src}
+          alt={backUrl + images[0].src}
           onClick={onZoom}
         />
 
@@ -42,15 +43,15 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={"http://localhost:5000/" + images[0].src}
-          alt={"http://localhost:5000/" + images[0].src}
+          src={backUrl + images[0].src}
+          alt={backUrl + images[0].src}
           onClick={onZoom}
         />
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={"http://localhost:5000/" + images[1].src}
-          alt={"http://localhost:5000/" + images[1].src}
+          src={backUrl + images[1].src}
+          alt={backUrl + images[1].src}
           onClick={onZoom}
         />
         {isImgZoomed && <ImageZoom images={images} onClose={onClose} />}
@@ -64,8 +65,8 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={"http://localhost:5000/" + images[0].src}
-          alt={"http://localhost:5000/" + images[0].src}
+          src={backUrl + images[0].src}
+          alt={backUrl + images[0].src}
           onClick={onZoom}
         />
 

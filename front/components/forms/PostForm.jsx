@@ -103,7 +103,7 @@ function PostForm() {
         {imagePaths.map((path, idx) => (
           <div key={path} style={{ display: "inline-block" }}>
             <img
-              src={`http://localhost:5000/${path}`}
+              src={`${backUrl}${path}`}
               style={{ width: "200px" }}
               alt={path}
             />
