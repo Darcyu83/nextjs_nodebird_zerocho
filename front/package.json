@@ -17,6 +17,7 @@
     "antd": "^4.24.6",
     "axios": "^1.2.2",
     "babel-plugin-styled-components": "^2.0.7",
+    "cross-env": "^7.0.3",
     "immer": "^9.0.17",
     "moment": "^2.29.4",
     "next": "^9.5.5",
