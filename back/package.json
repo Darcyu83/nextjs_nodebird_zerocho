@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon app",
     "prod": "NODE_ENV=production sudo pm2 start app.js",
-    "start": "node app"
+    "production": "pm2 start 'npm run start'",
+    "start": "NODE_ENV=production node app"
   },
   "author": "darcy.u83",
   "license": "ISC",
