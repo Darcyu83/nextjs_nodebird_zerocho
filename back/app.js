@@ -50,7 +50,10 @@ app.use(express.urlencoded({ extended: true }));
 //front : axios.default.withCredential true => 쿠키 전달
 //back : cors credentials true
 app.use(
-  cors({ origin: ["http://localhost:3000", "nodebird.com"], credentials: true })
+  cors({
+    origin: ["http://localhost:3000", "nodebird.com", "http://3.35.25.233"],
+    credentials: true,
+  })
 );
 
 // Cookie 미들웨어 사용
