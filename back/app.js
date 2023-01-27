@@ -5,6 +5,8 @@ const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
 const morgan = require("morgan");
+const hpp = require("hpp");
+const helmet = require("helmet");
 //환경변수 설정
 const dotenv = require("dotenv");
 dotenv.config();
@@ -20,7 +22,16 @@ const path = require("path");
 const configurePassport = require("./passport");
 configurePassport();
 
-app.set("port", process.env.NODE_ENV === "production" ? 80 : 5000);
+const isProdMode = process.env.NODE_ENV === "production";
+app.set("port", isProdMode ? 80 : 5000);
+
+if (isProdMode) {
+  app.use(morgan("combined"));
+  app.use(hpp());
+  app.use(helmet());
+} else {
+  app.use(morgan("dev"));
+}
 
 const PORT = app.get("port");
 // 업로드 폴더
@@ -35,14 +46,12 @@ app.use(express.json());
 // 일반 <form></form>으로 데이터 넘겨올때
 app.use(express.urlencoded({ extended: true }));
 
-// multipart/form-data 이미지 파일
-
-app.use(morgan("dev"));
-
 //credentials : 쿠키 전달하고 싶을때
 //front : axios.default.withCredential true => 쿠키 전달
 //back : cors credentials true
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({ origin: ["http://localhost:3000", "nodebird.com"], credentials: true })
+);
 
 // Cookie 미들웨어 사용
 app.use(cookieParser(process.env.COOKIE_SECRET));
