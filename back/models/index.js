@@ -15,15 +15,15 @@ const sequelize = new Sequelize(
   config
 );
 
-// 클래스 문법으로 바꿔봄
-// db.Comment = require("./comment")(sequelize, Sequelize);
+db.Comment = require("./comment")(sequelize, Sequelize);
 db.Comment = require("./comment");
+// 클래스 문법으로 바꿔봄
 
 // 클래스 모델이 여러개일 경우
 // Object.keys(db).forEach((modelName) => {
 //   db[modelName].init(sequelize);
 // });
-db.Comment.init(sequelize);
+// db.Comment.init(sequelize);
 
 db.Hashtag = require("./hashtag")(sequelize, Sequelize);
 db.Image = require("./image")(sequelize, Sequelize);
