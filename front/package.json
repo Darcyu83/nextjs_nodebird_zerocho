@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "next -p 3000",
     "build": "cross-env ANALYZE=true NODE_ENV=production next build",
-    "start": "cross-env ANALYZE=true NODE_ENV=production next start -p 80",
+    "start": "cross-env ANALYZE=true NODE_ENV=production next start",
     "prod:build": "cross-env NODE_OPTIONS='--openssl-legacy-provider' ANALYZE=true NODE_ENV=production next build",
-    "prod:start": "cross-env NODE_OPTIONS='--openssl-legacy-provider' ANALYZE=true NODE_ENV=production next start -p 80"
+    "prod:start": "cross-env NODE_OPTIONS='--openssl-legacy-provider' ANALYZE=true NODE_ENV=production next start"
   },
   "author": "darcy.u83",
   "license": "ISC",
