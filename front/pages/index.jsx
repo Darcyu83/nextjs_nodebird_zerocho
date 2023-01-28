@@ -20,6 +20,12 @@ const Home = () => {
   //   dispatch({ type: LOAD_POSTS_REQUEST, lastId: undefined });
   // }, []);
 
+  useEffect(() => {
+    console.log(`\n\n
+    process.env.NODE_ENV=${process.env.NODE_ENV}
+    axios.defaults.baseURL=${axios.defaults.baseURL}
+    \n\n`);
+  }, []);
   return (
     <AppLayout>
       {/* 포스트 등록 폼 */}
