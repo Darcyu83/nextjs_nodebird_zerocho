@@ -66,7 +66,10 @@ app.use(
     resave: false,
     secret: process.env.COOKIE_SECRET, // cookie sessionKey생성시 사용
     cookie: {
+      httpOnly: true,
       maxAge: 1000 * 60 * 5,
+      secure: false, //https 사용할경우 true
+      domain: isProdMode ? "http://43.200.190.178" : "http://localhost:3000",
     },
   })
 );
