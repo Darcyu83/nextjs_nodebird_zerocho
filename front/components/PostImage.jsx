@@ -27,8 +27,10 @@ function PostImage({ images }) {
         <img
           style={{ width: "100%" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={backUrl + images[0].src}
-          alt={backUrl + images[0].src}
+          // src={backUrl + images[0].src}
+          // alt={backUrl + images[0].src}
+          src={images[0].src}
+          alt={images[0].src}
           onClick={onZoom}
         />
 
@@ -43,15 +45,15 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={backUrl + images[0].src}
-          alt={backUrl + images[0].src}
+          src={images[0].src}
+          alt={images[0].src}
           onClick={onZoom}
         />
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={backUrl + images[1].src}
-          alt={backUrl + images[1].src}
+          src={images[1].src}
+          alt={images[1].src}
           onClick={onZoom}
         />
         {isImgZoomed && <ImageZoom images={images} onClose={onClose} />}
@@ -65,8 +67,8 @@ function PostImage({ images }) {
         <img
           style={{ width: "50%", display: "inline-block", cursor: "pointer" }}
           role="presentation" // Screen Reader가 클릭 할 순 있지만 굳이 안해도 된다 라고 판단
-          src={backUrl + images[0].src}
-          alt={backUrl + images[0].src}
+          src={images[0].src}
+          alt={images[0].src}
           onClick={onZoom}
         />
 

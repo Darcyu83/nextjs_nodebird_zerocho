@@ -103,7 +103,9 @@ function PostForm() {
         {imagePaths.map((path, idx) => (
           <div key={path} style={{ display: "inline-block" }}>
             <img
-              src={`${backUrl}${path}`}
+              // src={`${backUrl}${path}`}
+              // s3업로드 후에 location 값 s3전체 주소가 담겨져 옴
+              src={`${path}`}
               style={{ width: "200px" }}
               alt={path}
             />

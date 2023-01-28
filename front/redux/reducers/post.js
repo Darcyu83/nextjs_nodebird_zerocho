@@ -337,7 +337,7 @@ const postReducer = (state = initialState, action) =>
         break;
 
       case UPLOAD_IMAGES_SUCCESS:
-        draft.imagePaths = action.data;
+        draft.imagePaths = draft.imagePaths.concat(action.data);
         draft.isProcessing = false;
         break;
 

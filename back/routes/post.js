@@ -4,6 +4,9 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+
 const { Post, Comment, User, Image, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
@@ -16,19 +19,41 @@ try {
 }
 
 // 이미지 업로드용 Multer
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, res, done) {
-      done(null, "uploads");
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname); // 확장자만 추출 .png
-      const basename = path.basename(file.originalname, ext);
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination(req, res, done) {
+//       done(null, "uploads");
+//     },
+//     filename(req, file, done) {
+//       const ext = path.extname(file.originalname); // 확장자만 추출 .png
+//       const basename = path.basename(file.originalname, ext);
 
-      done(null, basename + "_" + new Date().getTime() + ext);
+//       done(null, basename + "_" + new Date().getTime() + ext);
+//     },
+//   }),
+//   limits: { fileSize: 1024 * 1024 * 20 }, //20MB
+// });
+
+// 이미지 업로드 multer to s3
+AWS.config.update({
+  region: "ap-northeast-2",
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  },
+});
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: "nextjs-nodebird",
+    key(req, file, cb) {
+      const filePath = `original/${Date.now()}_${path.basename(
+        file.originalname
+      )}`;
+      cb(null, filePath);
     },
   }),
-  limits: { fileSize: 1024 * 1024 * 20 }, //20MB
+  limits: { fileSize: 1024 * 1024 * 20 },
 });
 
 // 게시물 1개 조회
@@ -242,7 +267,11 @@ router.post(
   async (req, res, next) => {
     console.log("req.images_multer", req.files);
 
-    res.json(req.files.map((file) => file.filename));
+    // multer.diskStorage()
+    // res.json(req.files.map((file) => file.filename));
+
+    //multer multerS3 업로드 후에는 file.location
+    res.json(req.files.map((file) => file.location));
   }
 );
 
