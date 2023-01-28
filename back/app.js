@@ -51,7 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 //back : cors credentials true
 app.use(
   cors({
-    origin: ["http://localhost:3000", "nodebird.com", "http://3.35.25.233"],
+    origin: ["http://localhost:3000", "nodebird.com", "http://43.200.255.11"],
     credentials: true,
   })
 );
