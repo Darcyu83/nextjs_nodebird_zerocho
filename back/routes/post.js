@@ -36,7 +36,7 @@ try {
 
 // 이미지 업로드 multer to s3
 AWS.config.update({
-  region: "ap-northeast-2",
+  region: process.env.S3_REGION,
   credentials: {
     accessKeyId: process.env.S3_ACCESS_KEY_ID,
     secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
