@@ -21,11 +21,13 @@ const customLoggerMiddleware =
 
 const configureStoreAsStore = () => {
   const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [sagaMiddleware, customLoggerMiddleware];
+  // const middlewares = [sagaMiddleware, customLoggerMiddleware];
   const enhancer =
     process.env.NODE_ENV === "production"
-      ? compose(applyMiddleware(...middlewares))
-      : composeWithDevTools(applyMiddleware(...middlewares));
+      ? compose(applyMiddleware(sagaMiddleware))
+      : composeWithDevTools(
+          applyMiddleware(sagaMiddleware, customLoggerMiddleware)
+        );
 
   const store = legacy_createStore(rootReducer, enhancer);
   store.sagaTask = sagaMiddleware.run(rootSaga);

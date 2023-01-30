@@ -29,6 +29,9 @@ if (isProdMode) {
   app.use(morgan("combined"));
   app.use(hpp());
   app.use(helmet());
+
+  // Nginx 적용 및 cookie secure 옵션 추가
+  app.set("trust proxy", "1");
 } else {
   app.use(morgan("dev"));
 }
@@ -60,15 +63,21 @@ app.use(
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Session 미들웨어 사용
+
 app.use(
   session({
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET, // cookie sessionKey생성시 사용
+    // Nginx 적용 및 cookie secure true 옵션 추가
+    // 없으면 로그인 유지 안됨;
+    proxy: isProdMode,
     cookie: {
       httpOnly: true,
       maxAge: 1000 * 60 * 5,
-      secure: false, //https 사용할경우 true
+      // Nginx 적용 및 cookie secure true 옵션 추가
+      // 없으면 로그인 유지 안됨;
+      secure: isProdMode, //https 사용할경우 true + production
       domain: isProdMode ? "http://43.200.190.178" : "http://localhost:3000",
     },
   })
